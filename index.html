@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="data:,">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Circle Yield Calculator</title>
+  <style>
+    :root {
+      --bg:#0f172a; --bg-hi:#1f2937; --panel:#111827; --panel-hi:#0b1220;
+      --muted:#94a3b8; --text:#e5e7eb;
+      --accent:#22d3ee; --accent-2:#60a5fa; --ring:rgba(34,211,238,.35);
+      --border:#1f2937; --border-strong:#1d283a; --field:#0b1324;
+      --chip-bg:#0b1324; --chip-border:#243144; --canvas-bg:#0a0f1e;
+      --sheet-fill:#0b1324; --sheet-stroke:#243144; --guide-stroke:#64748b99;
+      --circle-stroke:#60a5fa; --circle-fill: rgba(96,165,250,0.15);
+      --label-text:#e5e7eb; --scale-text: rgba(148,163,184,0.7); --label-stroke: rgba(0,0,0,0.55);
+      --btn-1:#0ea5e9; --btn-2:#0284c7; --btn-sec-1:#64748b; --btn-sec-2:#475569;
+      --ok:#34d399; --warn:#f59e0b; --err:#f87171;
+    }
+    /* Themes */
+    body[data-theme="slate"]{ --bg:#0f172a; --bg-hi:#1f2937; --panel:#111827; --panel-hi:#0b1220; --muted:#94a3b8; --text:#e5e7eb; --accent:#22d3ee; --accent-2:#60a5fa; --ring:rgba(34,211,238,.35); --border:#1f2937; --border-strong:#1d283a; --field:#0b1324; --chip-bg:#0b1324; --chip-border:#243144; --canvas-bg:#0a0f1e; --sheet-fill:#0b1324; --sheet-stroke:#243144; --guide-stroke:#93c5fd66; --circle-stroke:#60a5fa; --circle-fill: rgba(96,165,250,0.15); --label-text:#e5e7eb; --scale-text: rgba(148,163,184,0.7); --btn-1:#0ea5e9; --btn-2:#0284c7; --btn-sec-1:#64748b; --btn-sec-2:#475569; }
+    body[data-theme="forest"]{ --bg:#0b1210; --bg-hi:#12201a; --panel:#0e1513; --panel-hi:#0b1411; --muted:#9bb3a7; --text:#e9f4ef; --accent:#10b981; --accent-2:#34d399; --ring:rgba(16,185,129,.32); --border:#1b2a23; --border-strong:#133126; --field:#0c1613; --chip-bg:#0c1613; --chip-border:#1b2a23; --canvas-bg:#0a1311; --sheet-fill:#0c1613; --sheet-stroke:#1b2a23; --guide-stroke:#34d39966; --circle-stroke:#34d399; --circle-fill: rgba(52,211,153,0.18); --label-text:#eefcf6; --scale-text: rgba(173,209,195,0.8); --btn-1:#34d399; --btn-2:#059669; --btn-sec-1:#6b7280; --btn-sec-2:#4b5563; }
+    body[data-theme="indigo"]{ --bg:#101225; --bg-hi:#1a1e41; --panel:#131634; --panel-hi:#10132c; --muted:#a5b4fc; --text:#eef2ff; --accent:#6366f1; --accent-2:#8b5cf6; --ring:rgba(99,102,241,.35); --border:#20244f; --border-strong:#1a1e41; --field:#0f1330; --chip-bg:#0f1330; --chip-border:#20244f; --canvas-bg:#0d112b; --sheet-fill:#0f1330; --sheet-stroke:#20244f; --guide-stroke:#8b5cf666; --circle-stroke:#8b5cf6; --circle-fill: rgba(139,92,246,0.18); --label-text:#eef2ff; --scale-text: rgba(197,203,255,0.8); --btn-1:#818cf8; --btn-2:#6366f1; --btn-sec-1:#71717a; --btn-sec-2:#52525b; }
+    body[data-theme="cocoa"]{ --bg:#1b130f; --bg-hi:#2a1d17; --panel:#211712; --panel-hi:#1b130f; --muted:#cbb8a8; --text:#f4ede6; --accent:#b7791f; --accent-2:#a16207; --ring:rgba(183,121,31,.32); --border:#38261c; --border-strong:#2d1f18; --field:#1e1511; --chip-bg:#1e1511; --chip-border:#38261c; --canvas-bg:#1a130f; --sheet-fill:#1e1511; --sheet-stroke:#38261c; --guide-stroke:#f59e0b66; --circle-stroke:#b7791f; --circle-fill: rgba(183,121,31,0.18); --label-text:#f4ede6; --scale-text: rgba(230,220,210,0.8); --btn-1:#d97706; --btn-2:#b45309; --btn-sec-1:#78716c; --btn-sec-2:#57534e; }
+    body[data-theme="graphite"]{ --bg:#0b0b0c; --bg-hi:#151618; --panel:#131315; --panel-hi:#101012; --muted:#9ca3af; --text:#e5e7eb; --accent:#6b7280; --accent-2:#9ca3af; --ring:rgba(156,163,175,.35); --border:#1f2937; --border-strong:#1b2230; --field:#151517; --chip-bg:#151517; --chip-border:#1f2937; --canvas-bg:#101012; --sheet-fill:#151517; --sheet-stroke:#1f2937; --guide-stroke:#9ca3af55; --circle-stroke:#9ca3af; --circle-fill: rgba(156,163,175,0.20); --label-text:#e5e7eb; --scale-text: rgba(180,186,196,0.75); --btn-1:#6b7280; --btn-2:#4b5563; --btn-sec-1:#4b5563; --btn-sec-2:#374151; }
+    body[data-theme="rose"]{ --bg:#160a0e; --bg-hi:#211017; --panel:#1a1116; --panel-hi:#130b10; --muted:#f2bac3; --text:#ffe4e6; --accent:#f43f5e; --accent-2:#fb7185; --ring:rgba(244,63,94,.32); --border:#2a1520; --border-strong:#201018; --field:#140c11; --chip-bg:#140c11; --chip-border:#2a1520; --canvas-bg:#12090d; --sheet-fill:#140c11; --sheet-stroke:#2a1520; --guide-stroke:#fb718555; --label-text:#ffe4e6; --scale-text: rgba(253,228,230,0.80); --label-stroke: rgba(0,0,0,0.35); --btn-1:#fb7185; --btn-2:#f43f5e; --btn-sec-1:#6b2a33; --btn-sec-2:#5a1f27; }
+    body[data-theme="light"]{ --bg:#f5f4f2; --bg-hi:#ebeae7; --panel:#fbfbfa; --panel-hi:#f5f4f2; --muted:#334155; --text:#1f2937; --accent:#5e6674; --accent-2:#7b8696; --ring:rgba(94,102,116,.16); --border:#e6e5e2; --border-strong:#d6d5d1; --field:#faf9f7; --chip-bg:#faf9f7; --chip-border:#e6e5e2; --canvas-bg:#f0efed; --sheet-fill:#ffffff; --sheet-stroke:#e6e5e2; --guide-stroke:#64748b66; --circle-stroke:#6f7785; --circle-fill: rgba(120,126,136,0.08); --label-text:#1f2937; --scale-text: rgba(71,85,105,0.75); --label-stroke: rgba(31,41,55,0.28); --btn-1:#eef0f2; --btn-2:#e3e6e9; --btn-sec-1:#f0f2f4; --btn-sec-2:#e6eaee; }
+
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:radial-gradient(1200px 800px at 80% -10%,var(--bg-hi) 0%,var(--bg) 60%);color:var(--text)}
+    .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+    .title{font-size:28px;font-weight:800;letter-spacing:.2px;margin-bottom:6px}
+    .sub{color:var(--muted);margin-bottom:14px}
+    .theme-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin:6px 0 16px 0}
+    .theme-row .chip{border:1px solid var(--chip-border);background:var(--chip-bg);color:var(--text);padding:6px 10px;border-radius:999px;font-weight:700;cursor:pointer;width:100%;text-align:center}
+    .theme-row .chip.active{border-color:var(--accent);box-shadow:0 0 0 4px var(--ring) inset}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+    .card{background:linear-gradient(180deg,var(--panel-hi),var(--panel));border:1px solid var(--border);border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;flex-direction:column}
+    .card h2{font-size:16px;font-weight:700;margin:0 0 12px;color:var(--text)}
+    .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .field{display:flex;flex-direction:column;gap:6px}
+    label{color:var(--muted);font-size:12px}
+    input,select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--field);color:var(--text);font-size:14px;outline:none;transition:box-shadow .15s ease,border-color .15s ease}
+    input:focus,select:focus{box-shadow:0 0 0 5px var(--ring);border-color:var(--accent)}
+    .btn{background:linear-gradient(180deg,var(--btn-1),var(--btn-2));border:none;font-weight:700;cursor:pointer}
+    .btn.sec{background:linear-gradient(180deg,var(--btn-sec-1),var(--btn-sec-2))}
+    .btn:hover{filter:brightness(1.08)}
+    .out{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .stat{background:var(--field);border:1px solid var(--border);border-radius:12px;padding:12px}
+    .stat .k{font-size:12px;color:var(--muted);margin-bottom:4px}
+    .stat .v{font-size:20px;font-weight:800;letter-spacing:.2px}
+
+    .canvas-wrap{position:relative;background:var(--canvas-bg);border:1px solid var(--border-strong);border-radius:16px;overflow:hidden}
+    #sheetCanvas{display:block;width:100%;height:auto;aspect-ratio:1000/520;background:var(--canvas-bg);image-rendering:crisp-edges}
+
+    .layout-header{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center}
+    .layout-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .tbtn{padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--field);color:var(--text);font-weight:700;cursor:pointer;text-transform:capitalize;width:100%}
+    .tbtn.active{border-color:var(--accent);box-shadow:0 0 0 5px var(--ring) inset;background:linear-gradient(180deg,var(--btn-1),var(--btn-2))}
+    .tbtn:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.2)}
+
+    .legend{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;color:var(--muted);font-size:12px}
+    .badge{padding:6px 10px;border-radius:999px;border:1px solid var(--chip-border);background:var(--chip-bg);color:var(--text)}
+
+    .greed-msg{display:inline-block;margin-left:10px;font-size:12px;font-weight:800;opacity:0;transform:translateY(8px)}
+    .greed-msg.ok{color:var(--ok)} .greed-msg.err{color:var(--err)}
+    @keyframes floatBonus{0%{opacity:0;transform:translateY(10px) scale(.98)}12%{opacity:1;transform:translateY(2px) scale(1)}75%{opacity:1;transform:translateY(-8px)}100%{opacity:0;transform:translateY(-18px)}}
+    .greed-msg.show{animation:floatBonus 3s ease-out 1 forwards}
+
+    .share-row{display:flex;flex-direction:column;gap:8px;margin:8px 0 0 0}
+
+    /* OLD switch style (restored) */
+    .switch{position:relative;display:inline-block;width:46px;height:26px;vertical-align:middle}
+    .switch input{display:none}
+    .switch .slider{position:absolute;inset:0;border-radius:999px;background:var(--field);border:1px solid var(--border);transition:all .2s ease}
+    .switch .slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;top:3px;border-radius:999px;background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .2s ease}
+    .switch input:checked + .slider{background:linear-gradient(180deg,var(--btn-1),var(--btn-2));border-color:var(--accent);box-shadow:0 0 0 4px var(--ring) inset}
+    .switch input:checked + .slider:before{transform:translateX(20px)}
+    .switch + span{margin-left:8px}
+  </style>
+</head>
+<body data-theme="slate">
+  <div class="wrap">
+    <div class="title">Circle Yield & Nesting Calculator</div>
+    <div class="sub">Greed uses a <b>Physics Style Engine</b>: circles <b>slide</b> under pressure. Phases: warmup 2s → simulation 5s → check 0.5s.</div>
+
+    <div class="theme-row">
+      <button class="chip theme-btn" data-theme="slate">Slate</button>
+      <button class="chip theme-btn" data-theme="forest">Forest</button>
+      <button class="chip theme-btn" data-theme="indigo">Indigo</button>
+      <button class="chip theme-btn" data-theme="cocoa">Cocoa</button>
+      <button class="chip theme-btn" data-theme="graphite">Graphite</button>
+      <button class="chip theme-btn" data-theme="rose">Rose</button>
+      <button class="chip theme-btn" data-theme="light">Light</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Inputs</h2>
+        <div class="row3">
+       	  <div class="field">
+  	    <label for="sheetSize">Sheet Size Format: L x W</label>
+  	    <input id="sheetSize" type="text" placeholder="e.g., 59x48" value="59x48" />
+	  </div>
+          <div class="field">
+            <label for="circleDiameter">Pad Diameter (in)</label>
+            <input id="circleDiameter" type="number" min="0" step="0.125" value="6">
+          </div>
+          <div class="field">
+            <label for="orderQty">Order Qty</label>
+            <input id="orderQty" type="number" min="0" step="1" placeholder="e.g., 250">
+          </div>
+          <div class="field">
+            <label for="spaceBetween">Buffer Around Pad(in)</label>
+            <input id="spaceBetween" type="number" min="0" step="0.0625" value="0.1000">
+          </div>
+          <div class="field" style="display:flex;align-items:center;gap:8px">
+            <label class="switch" title='0.75" Center Hole'>
+              <input type="checkbox" id="holeToggle"><span class="slider"></span>
+            </label>
+            <span style="font-size:12px;color:var(--muted)">Ø0.875" Hole</span>
+          </div>
+          <!-- NEW: Show Text toggle -->
+          <!-- <div class="field" style="display:flex;align-items:center;gap:8px">
+            <label class="switch" title="Show text labels">
+              <input type="checkbox" id="textToggle" checked><span class="slider"></span>
+            </label>
+            <span style="font-size:12px;color:var(--muted)">Show Text</span>
+          </div> -->
+          <div class="field" style="display:flex;align-items:center;gap:8px">
+            <label class="switch" title="Absolute Greed">
+              <input type="checkbox" id="greedToggle"><span class="slider"></span>
+            </label>
+            <span style="font-size:12px;color:var(--muted)">Absolute Greed</span>
+          </div>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <button id="computeBtn" class="btn">Enter</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Results</h2>
+        <div class="out" id="results">
+          <div class="stat"><div class="k">Max Yield / Sheet</div><div class="v" id="maxYield">—</div></div>
+          <div class="stat"><div class="k">Sheets Required</div><div class="v" id="sheetsReq">—</div></div>
+          <div class="stat"><div class="k">Remainder on Last Sheet</div><div class="v" id="remainder">—</div></div>
+        </div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+
+    <div class="card canvas-wrap" style="margin-top:12px">
+      <h2 class="layout-header">
+        <div class="layout-title">
+          <span>Layout Preview</span>
+          <span id="greedMsg" class="greed-msg" aria-live="polite"></span>
+        </div>
+        <button id="viewFullBtn" type="button" class="tbtn active">Full Sheet (0)</button>
+        <button id="viewPartialBtn" type="button" class="tbtn">Partial (0)</button>
+      </h2>
+      <canvas id="sheetCanvas" width="1000" height="520" aria-label="Packed layout visualization"></canvas>
+      <div class="legend"><span class="badge">Sheet Outline</span><span class="badge">Dashed = Inner Guide</span><span class="badge">Hex/Square/Hybrid Baseline</span></div>
+      <div class="share-row">
+        <button id="downloadDXF" class="btn sec">Download DXF</button>
+        <button id="downloadPNG" class="btn sec">Download PNG</button>
+		<button id="downloadGCODE" class="btn sec">Download G-code</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){ try{
+      const saved = localStorage.getItem('theme') || 'slate';
+      document.body.setAttribute('data-theme', saved);
+      const btns = Array.from(document.getElementsByClassName('theme-btn'));
+      btns.forEach(b=>{
+        if (b.dataset.theme === saved) b.classList.add('active');
+        b.addEventListener('click', function(){
+          const th = this.dataset.theme;
+          document.body.setAttribute('data-theme', th);
+          try{ localStorage.setItem('theme', th); }catch(e){};
+          btns.forEach(x=>x.classList.remove('active'));
+          this.classList.add('active');
+          if (typeof renderCurrentView === 'function') renderCurrentView();
+        });
+      });
+    }catch(e){}; })();
+
+    const SHEETS = [
+      ["z123456", "40 x 40 Generic", "40x40"],
+      ["z123456", "59 x 48 Generic", "59x48"],
+      ["x100200", "60 x 40 Generic", "60x40"],
+      ["x100200", "92 x 45 Generic", "92x45"],
+      ["m778899", "80 x 40 Generic", "80x40"]
+    ];
+    const EXTRA_PUSH_IN = 1/8;      // extra buffer used ONLY during Greed physics
+    const SHEET_INSET_IN = 0;
+    const GUIDE_INSET_IN = .0625;      // visual guide only
+    const HOLE_DIAM_IN = 0.875;
+
+    const sheetSelect = document.getElementById('sheetSelect');
+    const circleDiameter = document.getElementById('circleDiameter');
+    const sheetSize = document.getElementById('sheetSize');
+    const orderQty = document.getElementById('orderQty');
+    const spaceBetween = document.getElementById('spaceBetween');
+    const computeBtn = document.getElementById('computeBtn');
+    const viewFullBtn = document.getElementById('viewFullBtn');
+    const viewPartialBtn = document.getElementById('viewPartialBtn');
+function updateViewButtons(){
+      if (!viewFullBtn || !viewPartialBtn) return;
+      if (viewMode === 'full') {
+        viewFullBtn.classList.add('active');
+        viewPartialBtn.classList.remove('active');
+      } else {
+        viewPartialBtn.classList.add('active');
+        viewFullBtn.classList.remove('active');
+      }
+    }
+    if (viewFullBtn) viewFullBtn.addEventListener('click', () => { viewMode='full'; updateViewButtons(); if (typeof renderCurrentView === 'function') renderCurrentView(); });
+    if (viewPartialBtn) viewPartialBtn.addEventListener('click', () => { viewMode='partial'; updateViewButtons(); if (typeof renderCurrentView === 'function') renderCurrentView(); });
+    
+    // (removed dup) viewPartialBtn already declared
+    const greedToggle = document.getElementById('greedToggle');
+    const greedMsg = document.getElementById('greedMsg');
+    const holeToggle = document.getElementById('holeToggle');
+    // Re-render only (no recompute) when hole is toggled
+    if (holeToggle) {
+      holeToggle.addEventListener('change', () => {
+        if (typeof renderCurrentView === 'function') renderCurrentView();
+      });
+    }
+    
+    const textToggle = document.getElementById('textToggle'); // NEW
+    const canvas = document.getElementById('sheetCanvas');
+    const ctx = canvas.getContext('2d');
+    const outMaxYield = document.getElementById('maxYield');
+    const outSheetsReq = document.getElementById('sheetsReq');
+    const outRemainder = document.getElementById('remainder');
+    const legend = document.getElementById('legend');
+    const downloadDXFBtn = document.getElementById('downloadDXF');
+
+    let viewMode = 'full';
+    // lastLayout holds both baseline (hex/square/hybrid) and greedy (if achieved)
+    // shape: { W,H,D, order, padBuffer, base:{pts,capacity}, greedy?:{pts,capacity} }
+    let lastLayout = null;
+
+    function cssVar(name, fallback){ try{ const v = getComputedStyle(document.body).getPropertyValue(name); return (v && v.trim()) || fallback; }catch(e){ return fallback; } }
+    function fitCanvas()
+    {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const w = Math.max(1, Math.round(rect.width * dpr));
+      const h = Math.max(1, Math.round(rect.height * dpr));
+      if (canvas.width !== w || canvas.height !== h){ canvas.width = w; canvas.height = h; }
+    }
+    function parseSize(str)
+    {
+      const m = (str || "").match(/^\s*(\d*\.?\d+)\s*x\s*(\d*\.?\d+)\s*$/i);
+      if (!m) return null;
+      return { w: parseFloat(m[1]), h: parseFloat(m[2]) };
+    }
+    
+/* === Mixed toggle + extra inputs (compact) === */
+      (function()
+      {
+        // Find the row with your existing inputs (Pad Diameter, Order Qty, etc.)
+        const row = document.getElementById('row3') || document.querySelector('#row3');
+        if (!row) return;
+
+        // --- Mixed button (top-right of the input row) ---
+        const btn = document.createElement('button');
+        btn.id = 'btnMixed';
+        btn.type = 'button';
+        btn.textContent = 'Mixed';
+        btn.className = 'chip';
+        // nudge it to the right in most layouts
+        btn.style.marginLeft = 'auto';
+        btn.style.alignSelf = 'start';
+        btn.style.opacity = '.9';
+        btn.title = 'Toggle mixed-size mode';
+        row.appendChild(btn);
+
+        // --- Extra inputs (hidden until Mixed is on) ---
+        const box = document.createElement('div');
+        box.id = 'mixedFields';
+        box.style.display = 'none';
+        box.style.gap = '12px';
+        box.style.flexWrap = 'wrap';
+        box.innerHTML = `
+          <div class="field">
+            <label for="circleDiameter2">Pad 2 Diameter (in)</label>
+            <input id="circleDiameter2" type="number" min="0" step="0.125" placeholder="e.g., 4">
+          </div>
+          <div class="field">
+            <label for="orderQty2">Order Qty (Pad 2)</label>
+            <input id="orderQty2" type="number" min="0" step="1" placeholder="e.g., 120">
+          </div>
+        `;
+        row.appendChild(box);
+
+        const circleDiameter2 = box.querySelector('#circleDiameter2');
+        const orderQty2       = box.querySelector('#orderQty2');
+
+        // When these change, re-render
+        [circleDiameter2, orderQty2].forEach(el => el && el.addEventListener('change', ()=>computeAndRender()));
+
+        // Remember toggle state
+        let MIXED_ON = false;
+
+        btn.addEventListener('click', ()=>{
+          MIXED_ON = !MIXED_ON;
+          btn.textContent = MIXED_ON ? 'Mixed (on)' : 'Mixed';
+          btn.style.background = MIXED_ON ? 'var(--accent, #22d3ee)' : '';
+          btn.style.color = MIXED_ON ? '#041019' : '';
+          box.style.display = MIXED_ON ? 'flex' : 'none';
+          if (!MIXED_ON){ circleDiameter2.value=''; orderQty2.value=''; }
+          computeAndRender();
+        });
+
+        /* ---------- Mixed layout (big → small) – minimal helpers ---------- */
+        function canPlace(x, y, rEff, placed){
+          const eps=1e-7;
+          for (const q of placed){
+            const min = rEff + q.rEff;
+            const dx=x-q.x, dy=y-q.y;
+            if (dx*dx + dy*dy < (min*min - eps)) return false;
+          }
+          return true;
+        }
+        function* hexCandidates(W, H, rEff){
+          const dx = 2*rEff, dy = Math.sqrt(3)*rEff; let row=0;
+          for (let y=rEff; y<=H-rEff+1e-9; y+=dy, row++){
+            const x0 = (row%2===0 ? rEff : rEff*2);
+            for (let x=x0; x<=W-rEff+1e-9; x+=dx) yield {x,y};
+          }
+        }
+        function fillSheetBigThenSmall(Wuse,Huse,inset, Dbig,needBig, Dsmall,needSmall, padBuf){
+          const rB=Dbig/2, rS=Dsmall/2, rEB=rB+(padBuf||0), rES=rS+(padBuf||0);
+          // place bigs from your baseline
+          const best = (typeof bestPackForSheet==='function') ? bestPackForSheet(Wuse,Huse,Dbig,padBuf) : {pts:[]};
+          const ptsB = best.pts.slice(0, Math.min(needBig, best.pts.length));
+          const placed = ptsB.map(p=>({x:p.x,y:p.y,r:rB,rEff:rEB}));
+          // fill smalls in gaps
+          let cntS=0;
+          if (needSmall>0 && Dsmall>0){
+            for (const c of hexCandidates(Wuse,Huse,rES)){
+              if (canPlace(c.x,c.y,rES,placed)){
+                placed.push({x:c.x,y:c.y,r:rS,rEff:rES});
+                if (++cntS>=needSmall) break;
+              }
+            }
+          }
+          return { centers: placed.map(p=>({x:p.x+inset, y:p.y+inset, r:p.r})),
+                  countBig: ptsB.length, countSmall: cntS };
+        }
+        function planMixed(W0,H0,inset,padBuf, D1,Q1, D2,Q2){
+          const Wuse=Math.max(0,W0-2*inset), Huse=Math.max(0,H0-2*inset);
+          let b=Q1|0, s=Q2|0, sheets=[];
+          while (b>0 || s>0){
+            const r = fillSheetBigThenSmall(Wuse,Huse,inset, D1,b, D2,s, padBuf);
+            if (!r.centers.length) break;
+            sheets.push(r.centers);
+            b=Math.max(0,b-r.countBig); s=Math.max(0,s-r.countSmall);
+          }
+          return sheets;
+        }
+// ------- CONFIGURE YOUR WATERJET DIALECT HERE -------
+const GC_UNITS_INCHES = true;     // true=G20 (inches), false=G21 (mm)
+const GC_ABSOLUTE     = true;     // true=G90 absolute, false=G91 incremental
+const GC_PLANE_XY     = true;     // G17 XY plane (standard for arcs)
+
+// Jet control (change to match your controller)
+// Common patterns: M62/M63, M7/M9, M8/M9, or custom M-codes.
+const GC_JET_ON  = 'M62';
+const GC_JET_OFF = 'M63';
+
+// Heights / pierce dwell (most waterjets keep Z fixed; you can leave Z out if not used)
+const GC_SAFE_Z      = 0.100;   // safe lift (optional – comment out if not needed)
+const GC_CUT_Z       = 0.000;   // cutting height (often Z stays at 0)
+const GC_PIERCE_DWELL_SEC = 0.7; // G4 dwell seconds at pierce
+
+// Feeds (in/min if G20; mm/min if G21)
+const GC_FEED_OUTER  = 35.0;
+const GC_FEED_HOLE   = 30.0;
+
+// Arc output mode (many controllers need two half-arcs for a full circle)
+const GC_TWO_ARC_CIRCLE = true; // true: two 180° arcs; false: single 360° where supported
+
+// ---------- UTILS ----------
+function gcodeHeader() {
+  const lines = [];
+  lines.push(`(WaterJet G-code export from Yield/Nesting tool)`);
+  lines.push(GC_UNITS_INCHES ? 'G20' : 'G21'); // units
+  if (GC_ABSOLUTE) lines.push('G90');
+  if (GC_PLANE_XY) lines.push('G17');
+  lines.push('G40 G49');      // cancel cutter comp / tool length, harmless for waterjet
+  lines.push('G94');          // feed per minute
+  // Optional Z move:
+  if (Number.isFinite(GC_SAFE_Z)) lines.push(`G0 Z${GC_SAFE_Z.toFixed(4)}`);
+  return lines;
+}
+function gcodeFooter() {
+  const lines = [];
+  lines.push(GC_JET_OFF);
+  if (Number.isFinite(GC_SAFE_Z)) lines.push(`G0 Z${GC_SAFE_Z.toFixed(4)}`);
+  lines.push('G0 X0 Y0');
+  lines.push('M30');
+  return lines;
+}
+function fmt(v){ return Number(v).toFixed(4); }
+
+// Emit a full circular contour using two 180° arcs (G2 clockwise).
+// Start point is at (x+r, y), center offsets I,J are relative to the start point.
+function gcodeFullCircleCW(x, y, r, feed) {
+  const lines = [];
+  const sx = x + r, sy = y;         // start at 0° (east)
+  // move rapid to start:
+  lines.push(`G0 X${fmt(sx)} Y${fmt(sy)}`);
+  // drop to cut height (optional):
+  if (Number.isFinite(GC_CUT_Z)) lines.push(`G1 Z${fmt(GC_CUT_Z)} F${fmt(feed)}`);
+  // pierce:
+  lines.push(GC_JET_ON);
+  if (GC_PIERCE_DWELL_SEC > 0) lines.push(`G4 P${fmt(GC_PIERCE_DWELL_SEC)}`);
+  // set cut feed:
+  lines.push(`F${fmt(feed)}`);
+  if (GC_TWO_ARC_CIRCLE) {
+    // 0° -> 180°: end at (x - r, y), center offset I,J = (-r, 0)
+    lines.push(`G2 X${fmt(x - r)} Y${fmt(y)} I${fmt(-r)} J0.0000`);
+    // 180° -> 360°: end at (x + r, y), center offset I,J = (+r, 0)
+    lines.push(`G2 X${fmt(x + r)} Y${fmt(y)} I${fmt(+r)} J0.0000`);
+  } else {
+    // Some controllers accept a full 360° arc via same start/end with I,J once
+    lines.push(`G2 X${fmt(sx)} Y${fmt(sy)} I${fmt(-r)} J0.0000`);
+  }
+  // jet off and retract (optional):
+  lines.push(GC_JET_OFF);
+  if (Number.isFinite(GC_SAFE_Z)) lines.push(`G0 Z${fmt(GC_SAFE_Z)}`);
+  return lines;
+}
+
+// Build ordered toolpaths: inner holes (if enabled) first, then outer circles.
+function buildToolpathsFromCenters(data) {
+  const { W, H, centers } = data;
+  const holeOn = !!(document.getElementById('holeToggle')?.checked);
+  const holeR  = (typeof centers[0]?.holeR === 'number')
+                  ? centers[0].holeR
+                  : (window.HOLE_DIAM_IN ? window.HOLE_DIAM_IN/2 : 0.0);
+  const lines = [];
+
+  // Helper to flip Y to match your DXF’s coordinate frame (origin at lower-left):
+  const mapXY = (cx, cy) => ({ X: cx, Y: (H - cy) });
+
+  // 1) Holes
+  if (holeOn && holeR > 0) {
+    lines.push('(--- inner holes ---)');
+    for (const c of centers) {
+      const { X, Y } = mapXY(c.x, c.y);
+      lines.push(...gcodeFullCircleCW(X, Y, holeR, GC_FEED_HOLE));
+    }
+  }
+
+  // 2) Outer circles
+  lines.push('(--- outer profiles ---)');
+  for (const c of centers) {
+    const { X, Y } = mapXY(c.x, c.y);
+    const r = (typeof c.r === 'number') ? c.r : (window.lastLayout?.D ? window.lastLayout.D/2 : 0);
+    if (r > 0) lines.push(...gcodeFullCircleCW(X, Y, r, GC_FEED_OUTER));
+  }
+
+  return lines;
+}
+
+// Attempt to get the active layout (greedy/full/partial or mixed).
+// Falls back to lastLayout if getCurrentLayoutForExport is absent.
+function getLayoutForGcode() {
+  if (typeof window.getCurrentLayoutForExport === 'function') {
+    const d = window.getCurrentLayoutForExport();
+    if (d && d.centers && d.centers.length) return d;
+  }
+  // Fallback reconstruct (mirrors your DXF export behavior)
+  if (!window.lastLayout) return null;
+  const src = (window.viewMode === 'partial' || !window.lastLayout.greedy)
+    ? window.lastLayout.base
+    : window.lastLayout.greedy;
+
+  // If mixed-mode injected per-circle radii, pts may be of shape {x,y,r}
+  const centers = (src.pts || []).map(p => ({
+    x: p.x, y: p.y, r: (typeof p.r === 'number' ? p.r : (window.lastLayout.D/2 || 0))
+  }));
+
+  return { W: window.lastLayout.W, H: window.lastLayout.H, centers };
+}
+
+function exportGCode() {
+  const data = getLayoutForGcode();
+  if (!data || !data.centers || !data.centers.length) {
+    alert('No layout to export. Compute a layout first.'); return;
+  }
+  const lines = [
+    ...gcodeHeader(),
+    ...buildToolpathsFromCenters(data),
+    ...gcodeFooter()
+  ];
+
+  // Name like your DXF: WxH_kind_(wh|nh)_Npcs.nc
+  const holeText = document.getElementById('holeToggle')?.checked ? '(wh)_' : '(nh)_';
+  const count = data.centers.length;
+  const nameBase = `${data.W}x${data.H}_circles_${holeText}${count}pcs.nc`;
+
+  const blob = new Blob([lines.join('\n') + '\n'], { type: 'text/x-gcode' });
+  const a = document.createElement('a');
+  a.download = nameBase;
+  a.href = URL.createObjectURL(blob);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+        // Keep originals
+        const __orig_compute = window.computeAndRender;
+        const __orig_draw = window.drawLayout;
+        const __orig_export = window.exportDXF;
+
+        // Per-circle draw/export support (if centers carry `r`)
+        window.drawLayout = function(W,H,D,pts,viewMode,order,capacity){
+          if (pts && pts.length && typeof pts[0].r === 'number'){
+            // minimal draw: reuse original sheet frame, but draw each with its own radius
+            const canvas = document.getElementById('sheetCanvas'); const ctx = canvas.getContext('2d');
+            function cssVar(n,f){ const s=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return s||f||''; }
+            (function fit(){ const dpr=window.devicePixelRatio||1, r=canvas.getBoundingClientRect(), w=Math.max(300,r.width|0), h=Math.max(200,r.height|0); if (canvas.width!==w*dpr||canvas.height!==h*dpr){ canvas.width=w*dpr; canvas.height=h*dpr; } ctx.setTransform(dpr,0,0,dpr,0,0); })();
+            const pad=20, cw=canvas.width, ch=canvas.height, scale=Math.min((cw-pad*2)/W,(ch-pad*2)/H), ox=(cw-W*scale)/2, oy=(ch-H*scale)/2;
+            ctx.clearRect(0,0,cw,ch);
+            ctx.fillStyle=cssVar('--sheet-fill','#0b1324'); ctx.strokeStyle=cssVar('--sheet-stroke','#243144'); ctx.lineWidth=2;
+            if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,W*scale,H*scale,10); ctx.fill(); ctx.stroke(); } else { ctx.fillRect(ox,oy,W*scale,H*scale); ctx.strokeRect(ox,oy,W*scale,H*scale); }
+            if (window.GUIDE_INSET_IN>0){
+              ctx.save();
+              const ix=ox+window.GUIDE_INSET_IN*scale, iy=oy+window.GUIDE_INSET_IN*scale;
+              const iW=(W-2*window.GUIDE_INSET_IN)*scale, iH=(H-2*window.GUIDE_INSET_IN)*scale;
+              ctx.setLineDash([8,6]); ctx.strokeStyle=cssVar('--guide-stroke','#64748b99'); ctx.globalAlpha=.9; ctx.lineWidth=1.2;
+              if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ix,iy,iW,iH,10); ctx.stroke(); } else { ctx.strokeRect(ix,iy,iW,iH); }
+              ctx.restore();
+            }
+            // how many to draw in full/partial view
+            let toDraw = pts.length;
+            if (viewMode==='full'){ toDraw=Math.min(capacity||pts.length, pts.length); }
+            else if (viewMode==='partial'){ const rem=order % Math.max(1,capacity||pts.length); toDraw = order>0 && order<(capacity||pts.length) ? order : (rem!==0 ? rem : 0); }
+            const circleStroke=cssVar('--circle-stroke','#60a5fa'), circleFill=cssVar('--circle-fill','rgba(96,165,250,0.15)');
+            const holeOn = !!(window.holeToggle && window.holeToggle.checked), holeR = window.HOLE_DIAM_IN/2;
+            ctx.lineWidth=1.6;
+            for (let i=0;i<Math.min(toDraw, pts.length);i++){
+              const p=pts[i], cx=ox+p.x*scale, cy=oy+p.y*scale, rPix=p.r*scale;
+              ctx.beginPath(); ctx.arc(cx,cy,rPix,0,Math.PI*2); ctx.fillStyle=circleFill; ctx.strokeStyle=circleStroke; ctx.fill(); ctx.stroke();
+              if (holeOn){ ctx.beginPath(); ctx.arc(cx,cy,holeR*scale,0,Math.PI*2); ctx.fillStyle=cssVar('--sheet-fill','#0b1324'); ctx.fill(); ctx.strokeStyle=circleStroke; ctx.stroke(); }
+              if (window.textToggle && window.textToggle.checked){ window.drawPadLabel && window.drawPadLabel(ctx, cx, cy, p.r*2, rPix); }
+            }
+            ctx.fillStyle='rgba(148,163,184,0.7)'; ctx.font='12px ui-sans-serif, system-ui';
+            
+            // Corner label for Mixed view
+            (function drawCornerLabelMixed(){
+              try{
+                const holeTxt = (holeToggle && holeToggle.checked) ? '(wh)' : '(nh)';
+                const d1 = Number(circleDiameter && circleDiameter.value || 0);
+                const d2El = document.getElementById('circleDiameter2');
+                const d2 = Number(d2El && d2El.value || 0);
+                const fmt = (v)=> (isFinite(v) && v>0) ? String(v) : '?';
+                const label = fmt(d1)+holeTxt+'  +  '+fmt(d2)+holeTxt;
+                ctx.save();
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'top';
+                ctx.fillStyle = cssVar('--scale-text','rgba(148,163,184,0.7)');
+                ctx.font = 'bold 14px ui-sans-serif, system-ui';
+                ctx.fillText(label, ox + W*scale - 8, oy + 8);
+                ctx.restore();
+              }catch(e){}
+            })();
+            ctx.fillText('Mixed display (big→small).', ox+6, oy+H*scale-8);
+    
+            return;
+          }
+          return __orig_draw(W,H,D,pts,viewMode,order,capacity);
+        };
+
+        window.exportDXF = function(){
+          const data = window.getCurrentLayoutForExport && window.getCurrentLayoutForExport();
+          if (data && data.centers && data.centers.length && typeof data.centers[0].r === 'number'){
+            const { W,H,centers } = data;
+            const parts = [dxfHeader()];
+            parts.push(dxfLWPoly([{x:0,y:0},{x:W,y:0},{x:W,y:H},{x:0,y:H},{x:0,y:0}],'SHEET'));
+            for (const c of centers){
+              const x=c.x, y=H-c.y;
+              parts.push(dxfCircle(x,y,c.r,'CIRCLES'));
+              if (window.holeToggle && window.holeToggle.checked){
+                const holeR = (typeof c.holeR==='number')? c.holeR : (window.HOLE_DIAM_IN/2);
+                if (holeR>0) parts.push(dxfCircle(x,y,holeR,'HOLES'));
+              }
+            }
+            parts.push(dxfFooter());
+            const blob=new Blob([parts.join('\n')],{type:'application/dxf'});
+            const a=document.createElement('a'); const ts=new Date().toISOString().replace(/[:.]/g,'-');
+            const holeText = document.getElementById('holeToggle')?.checked ? '(wh)_' : '(nh)_';
+            const nameBase = `${W}x${H}_`;
+            let kind = 'mixed_';
+            if (!(centers && centers.length && typeof centers[0].r === 'number')){
+              const dia = (window.lastLayout && window.lastLayout.D) ? window.lastLayout.D : 0;
+              kind = (dia ? `${dia}in_` : '');
+            }
+            a.download = `${nameBase}${kind}${holeText}${(centers||[]).length}pcs.dxf`; a.href=URL.createObjectURL(blob);
+            document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+            return;
+          }
+          return __orig_export();
+        };
+
+        // Mixed-aware compute: if Mixed is on AND Pad 2 fields have values, show mixed display
+        window.computeAndRender = function(){
+          if (!MIXED_ON) return __orig_compute();
+
+          const idx = Number(sheetSelect.value||0);
+          const opt = sheetSelect.options[sheetSelect.selectedIndex];
+          const arr = window.SHEETS[idx] || [];
+          const sizeStr = arr[2] || (opt && opt.dataset.size) || '';
+          const size = window.parseSize(sizeStr);
+          const D1 = Number(window.circleDiameter.value);
+          const Q1 = Math.max(0, Math.floor(Number(window.orderQty.value||0)||0));
+          const D2 = Number(circleDiameter2 && circleDiameter2.value || 0);
+          const Q2 = Math.max(0, Math.floor(Number(orderQty2 && orderQty2.value||0)||0));
+
+          if (!(size && D1>0) || !(D2>0 && Q2>0)){
+            // not enough info for mixed -> fall back
+            return __orig_compute();
+          }
+
+          // Mixed sheet 1 (big→small)
+          window.stopGreedAnimation && window.stopGreedAnimation(); // Greed is single-radius
+          const W0=size.w, H0=size.h, inset=window.SHEET_INSET_IN, padBuf = window.getPadBuffer ? window.getPadBuffer() : 0;
+          const sheets = planMixed(W0,H0,inset,padBuf, D1,Q1, D2,Q2);
+          const s0 = sheets[0] || [];
+
+          // Update the existing UI counters in a simple, consistent way
+          const totalOrdered = Q1+Q2;
+          outMaxYield.textContent = String(s0.length||0);
+          outSheetsReq.textContent = String(sheets.length||0);
+          const lastCap = sheets.length ? sheets[sheets.length-1].length : 0;
+          const remainder = (lastCap>0 && totalOrdered>0) ? (totalOrdered % lastCap) : 0;
+          outRemainder.textContent = (remainder===0 && totalOrdered>0) ? 'Full' : String(remainder);
+
+          // Prep lastLayout so your renderer/exporter sees per-circle radii
+          window.lastLayout = {
+            W: W0, H: H0, D: D1, // D used for labels; each center has its own r
+            order: totalOrdered,
+            padBuffer: padBuf,
+            base: { pts: s0, capacity: s0.length },
+            greedy: null
+          };
+          window.viewMode='full';
+          window.renderCurrentView && window.renderCurrentView();
+        };
+      })();
+
+    function populateSheets()
+    {
+      sheetSelect.innerHTML = '';
+      SHEETS.forEach((s, idx)=>{
+        const opt = document.createElement('option');
+        opt.value = String(idx);
+        opt.textContent = s[1];
+        opt.dataset.material = s[0];
+        opt.dataset.size = s[2];
+        sheetSelect.appendChild(opt);
+      });
+    }
+
+    function generalHexPack(W,H,D,buffer,getOffset)
+    {
+      const r = D/2, rEff = r + (buffer||0), vPitch = Math.sqrt(3)*rEff, pts=[];
+      const rows=[]; for(let y=rEff; y<=H-rEff+1e-9; y+=vPitch) rows.push(y);
+      for (let i=0;i<rows.length;i++){
+        const y = rows[i];
+        const off = getOffset ? getOffset(i, rows.length, rEff) : (i%2 ? rEff : 0);
+        for (let x=rEff+off; x<=W-rEff+1e-9; x+=2*rEff) pts.push({x,y});
+      }
+      return pts;
+    }
+    function squarePack(W,H,D,buffer)
+    {
+      const r = D/2, rEff = r + (buffer||0), pts=[];
+      for (let y=rEff; y<=H-rEff+1e-9; y+=2*rEff){
+        for (let x=rEff; x<=W-rEff+1e-9; x+=2*rEff) pts.push({x,y});
+      }
+      return pts;
+    }
+    function rotatePts(arr){ return arr.map(p=>({x:p.y, y:p.x})); }
+
+    function validateNoOverlap(pts, rEff, W, H)
+    {
+      const eps = 1e-4;
+      const cell=2*rEff, buckets={};
+      const key=(x,y)=> (Math.floor(x/cell)+','+Math.floor(y/cell));
+      for (const p of pts){
+        if (p.x < rEff - eps || p.x > W - rEff + eps || p.y < rEff - eps || p.y > H - rEff + eps) return false;
+        const k = key(p.x,p.y); (buckets[k]||(buckets[k]=[])).push(p);
+      }
+      const min=2*rEff - eps, min2=min*min, nbs=[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+      for (const kk in buckets){
+        const list=buckets[kk], [ix,iy]=kk.split(',').map(Number);
+        for (let i=0;i<list.length;i++){
+          const p=list[i];
+          for (const [dxi,dyi] of nbs){
+            const arr=buckets[(ix+dxi)+','+(iy+dyi)]; if(!arr) continue;
+            for (const q of arr){
+              if (q===p) continue;
+              const dx=p.x-q.x, dy=p.y-q.y;
+              if (dx*dx+dy*dy < min2) return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
+
+    function bestPackForSheet(W,H,D,buffer)
+    {
+      const rEff = D/2 + (buffer||0);
+      const cands = [];
+      const offAlt = (row)=> row%2 ? rEff : 0;
+      const offShift = (row)=> row%2 ? 0 : rEff;
+      const offLastRowAligned = (rowIdx, rowsLen, r)=>{
+        const def = (rowIdx%2 ? r : 0);
+        if (rowIdx === rowsLen-1){
+          const prevOff = (rowsLen-2)>=0 ? (((rowsLen-2)%2 ? r : 0)) : 0;
+          const desired = 0;
+          return (prevOff === desired) ? def : desired;
+        }
+        return def;
+      };
+
+      cands.push({name:'hex_alt',        pts:generalHexPack(W,H,D,buffer,offAlt), rotated:false});
+      cands.push({name:'hex_shift',      pts:generalHexPack(W,H,D,buffer,offShift), rotated:false});
+      cands.push({name:'hex_last_align', pts:generalHexPack(W,H,D,buffer,offLastRowAligned), rotated:false});
+      cands.push({name:'square',         pts:squarePack(W,H,D,buffer), rotated:false});
+      cands.push({name:'hex_alt_rot',        pts:rotatePts(generalHexPack(H,W,D,buffer,offAlt)), rotated:true});
+      cands.push({name:'hex_shift_rot',      pts:rotatePts(generalHexPack(H,W,D,buffer,offShift)), rotated:true});
+      cands.push({name:'hex_last_align_rot', pts:rotatePts(generalHexPack(H,W,D,buffer,offLastRowAligned)), rotated:true});
+      cands.push({name:'square_rot',         pts:rotatePts(squarePack(H,W,D,buffer)), rotated:true});
+
+      const valid = cands.map(c=>({ ...c, ok:validateNoOverlap(c.pts, rEff, W, H), cap:c.pts.length }))
+                         .filter(c=>c.ok);
+
+      const pool = valid.length ? valid : [{name:'hex_alt', pts:[], cap:0, rotated:false}];
+      pool.sort((a,b)=> b.cap - a.cap);
+      const best = pool[0];
+
+      if (pool.length > 1){
+        const cell=2*rEff, buckets={};
+        const key=(x,y)=>(Math.floor(x/cell)+','+Math.floor(y/cell));
+        const min=2*rEff-1e-6, min2=min*min, nbs=[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+        function add(p){ const k=key(p.x,p.y); (buckets[k]||(buckets[k]=[])).push(p); }
+        function fits(p){
+          if (p.x < rEff-1e-9 || p.x > W-rEff+1e-9 || p.y < rEff-1e-9 || p.y > H-rEff+1e-9) return false;
+          const ix=Math.floor(p.x/cell), iy=Math.floor(p.y/cell);
+          for (const [dxi,dyi] of nbs){
+            const arr=buckets[(ix+dxi)+','+(iy+dyi)]; if(!arr) continue;
+            for (const q of arr){ const dx=p.x-q.x, dy=p.y-q.y; if (dx*dx+dy*dy < min2) return false; }
+          }
+          return true;
+        }
+        best.pts.forEach(p=>add(p));
+        const hybrid = best.pts.slice();
+        for (let k=1;k<pool.length;k++){
+          for (const p of pool[k].pts){ if (fits(p)){ hybrid.push(p); add(p); } }
+        }
+        if (hybrid.length > best.pts.length){ best.pts = hybrid; best.cap = hybrid.length; }
+      }
+      return { pts: best.pts, capacity: best.pts.length, variant: best.name, orientation: best.rotated ? 'Rotate 90°':'No rotation' };
+    }
+
+    function drawLayout(W, H, D, pts, viewMode, order, capacity)
+    {
+      fitCanvas();
+      const pad=20, cw=canvas.width, ch=canvas.height, scale=Math.min((cw-pad*2)/W,(ch-pad*2)/H), ox=(cw-W*scale)/2, oy=(ch-H*scale)/2;
+      ctx.clearRect(0,0,cw,ch);
+      const sheetFill=cssVar('--sheet-fill',cssVar('--field','#0b1324'));
+      const sheetStroke=cssVar('--sheet-stroke',cssVar('--border','#243144'));
+      const guideStroke=cssVar('--guide-stroke','#64748b99');
+      ctx.fillStyle=sheetFill; ctx.strokeStyle=sheetStroke; ctx.lineWidth=2;
+      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,W*scale,H*scale,12); ctx.fill(); ctx.stroke(); } else { ctx.fillRect(ox,oy,W*scale,H*scale); ctx.strokeRect(ox,oy,W*scale,H*scale); }
+      // inner dashed guide (visual only)
+      if (GUIDE_INSET_IN>0){
+        ctx.save();
+        const ix=ox+GUIDE_INSET_IN*scale, iy=oy+GUIDE_INSET_IN*scale;
+        const iW=(W-2*GUIDE_INSET_IN)*scale, iH=(H-2*GUIDE_INSET_IN)*scale;
+        ctx.setLineDash([8,6]); ctx.strokeStyle=guideStroke; ctx.globalAlpha=.9; ctx.lineWidth=1.2;
+        if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ix,iy,iW,iH,10); ctx.stroke(); } else { ctx.strokeRect(ix,iy,iW,iH); }
+        ctx.restore();
+      }
+      let toDraw = pts.length;
+      const ord = lastLayout ? lastLayout.order : 0;
+      if (viewMode === 'full'){ toDraw = capacity; }
+      else if (viewMode === 'partial'){
+        const rem = ord % Math.max(1, capacity);
+        toDraw = ord>0 && ord<capacity ? ord : (rem!==0 ? rem : 0);
+      }
+      const circleStroke=cssVar('--circle-stroke','#60a5fa');
+      const circleFill=cssVar('--circle-fill','rgba(96,165,250,0.15)');
+      ctx.lineWidth=1.6;
+      const rPix = (D/2)*scale;
+      const holeOn = !!(holeToggle && holeToggle.checked);
+      const holeR = HOLE_DIAM_IN/2;
+      for (let i=0;i<Math.min(toDraw, pts.length);i++){
+        const p=pts[i];
+        const cx=ox+p.x*scale, cy=oy+p.y*scale;
+        ctx.beginPath(); ctx.arc(cx,cy,rPix,0,Math.PI*2); ctx.fillStyle=circleFill; ctx.strokeStyle=circleStroke; ctx.fill(); ctx.stroke();
+        if (holeOn){ ctx.beginPath(); ctx.arc(cx,cy, holeR*scale, 0, Math.PI*2); ctx.fillStyle = sheetFill; ctx.fill(); ctx.strokeStyle=circleStroke; ctx.stroke(); }
+        // NEW: use refactored label drawer only if toggle is on
+        if (textToggle && textToggle.checked){ drawPadLabel(ctx, cx, cy, D, rPix); }
+      }
+      
+      // Top-right pad label (e.g., 6.875(wh) or mixed)
+      (function drawCornerLabel(){
+        try{
+          const holeTxt = (holeToggle && holeToggle.checked) ? '(wh)' : '(nh)';
+          let label = '';
+          const isMixed = (typeof window.__mixedToggle === 'function' && window.__mixedToggle());
+          if (isMixed && document.getElementById('circleDiameter2') && document.getElementById('circleDiameter2').value) {
+            const d1 = Number(circleDiameter && circleDiameter.value || 0);
+            const d2 = Number(document.getElementById('circleDiameter2').value || 0);
+            const fmt = (v)=> (isFinite(v) && v>0) ? String(v) : '';
+            label = (fmt(d1)?fmt(d1):'?') + holeTxt + '  +  ' + (fmt(d2)?fmt(d2):'?') + holeTxt;
+          } else {
+            const fmt = (v)=> (isFinite(v) && v>0) ? String(v) : '?';
+            label = fmt(D) + holeTxt;
+          }
+          ctx.save();
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'top';
+          ctx.fillStyle = cssVar('--scale-text','rgba(148,163,184,0.7)');
+          ctx.font = 'bold 14px ui-sans-serif, system-ui';
+          ctx.fillText(label, ox + W*scale - 8, oy + 8);
+          ctx.restore();
+        }catch(e){}
+      })();
+    ctx.fillStyle=cssVar('--scale-text','rgba(148,163,184,0.7)'); ctx.font='12px ui-sans-serif, system-ui';
+      ctx.fillText('Guides shown (dashed). Greed = no-spin; physics buffer = +1/16″ over your spacing.', ox+6, oy+H*scale-8);
+    }
+
+    function getPadBuffer(){ const v = parseFloat(spaceBetween.value); return isFinite(v) && v >= 0 ? v : 0; }
+
+    function computeAndRender()
+{
+  stopGreedAnimation();
+
+  // NEW: read size from the text box
+  const sizeStr = (sheetSize && sheetSize.value || '').trim();
+  const size = parseSize(sizeStr);
+
+  const D = Number(circleDiameter.value);
+  const amt_order = Math.max(0, Math.floor(Number(orderQty.value || 0) || 0));
+  legend.innerHTML='';
+
+  if (!size || !(D>0)){
+    outMaxYield.textContent='—'; outSheetsReq.textContent='—'; outRemainder.textContent='—';
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const warn=document.createElement('div'); warn.className='warn'; warn.textContent='Enter valid sheet (e.g., 59x48) and diameter.'; legend.appendChild(warn);
+    return;
+  }
+
+  const W0=size.w, H0=size.h;
+  const inset=SHEET_INSET_IN;
+  const Wuse=Math.max(0, W0 - 2*inset), Huse=Math.max(0, H0 - 2*inset);
+  if (Wuse<=0 || Huse<=0){
+    outMaxYield.textContent='—'; outSheetsReq.textContent='—'; outRemainder.textContent='—';
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const warn=document.createElement('div'); warn.className='warn'; warn.textContent='Sheet too small after inset.'; legend.appendChild(warn);
+    return;
+  }
+
+  const PAD_BUFFER = getPadBuffer();
+  const best = bestPackForSheet(Wuse, Huse, D, PAD_BUFFER);
+  const capacity = best.capacity;
+
+  outMaxYield.textContent = String(capacity);
+  const sheetsRequired = capacity>0 ? Math.ceil(amt_order / capacity) : 0;
+  const remainder = capacity>0 ? (amt_order % capacity) : 0;
+  outSheetsReq.textContent = String(sheetsRequired);
+  outRemainder.textContent = String(remainder);
+
+  const fullCount = capacity>0 ? Math.floor(amt_order / capacity) : 0;
+  let partialCount = 0;
+  if (capacity>0 && amt_order>0){
+    partialCount = (amt_order < capacity) ? 1 : ((amt_order % capacity)!==0 ? 1 : 0);
+  }
+  viewFullBtn.textContent = 'Full Sheet (' + fullCount + ')';
+  viewPartialBtn.textContent = 'Partial (' + partialCount + ')';
+  viewPartialBtn.disabled = partialCount === 0;
+  const onlyPartial = (capacity>0 && amt_order>0 && amt_order<capacity);
+  viewFullBtn.disabled = !!onlyPartial;
+  if (amt_order>0 && amt_order<capacity) viewMode='partial';
+  else if (partialCount===0 && viewMode==='partial') viewMode='full';
+
+  const meta = document.createElement('div');
+  meta.className='legend-meta';
+  meta.innerHTML = '<span class="badge">Size: <strong>'+W0+'×'+H0+'</strong></span>'+
+                   '<span class="badge">Buffer: <strong>'+PAD_BUFFER+'</strong></span>';
+  legend.appendChild(meta);
+
+  const shifted = best.pts.map(p=>({x:p.x+inset, y:p.y+inset}));
+  lastLayout = {
+    W: W0, H: H0, D,
+    order: amt_order,
+    padBuffer: PAD_BUFFER,
+    base: { pts: shifted, capacity: capacity },
+    greedy: null
+  };
+  renderCurrentView();
+
+  if (greedToggle && greedToggle.checked){
+    startGreedAnimation(Wuse, Huse, D, inset, best, PAD_BUFFER);
+    return;
+  }
+}
+
+    function renderCurrentView(){
+      if (!lastLayout) return;
+      const src = (viewMode === 'partial' || !lastLayout.greedy) ? lastLayout.base : lastLayout.greedy;
+      drawLayout(lastLayout.W, lastLayout.H, lastLayout.D, src.pts, viewMode, lastLayout.order, (lastLayout.greedy ? lastLayout.greedy.capacity : lastLayout.base.capacity));
+    }
+
+    // ---------- Greed (no-spin solver) ----------
+    let _greedSim = null, _greedRAF = null;
+    function startGreedAnimation(Wuse, Huse, D, inset, baseBest, padBuffer){
+      stopGreedAnimation();
+      const rPart = D/2;                               // true part radius
+      const rPhys = rPart + (padBuffer||0) + EXTRA_PUSH_IN; // physics radius with extra push
+      // Allow carrying forward a custom base with pts/capacity/warmupMs
+      const basePts = (baseBest && baseBest.pts) ? baseBest.pts : [];
+      const baseCap = (typeof baseBest?.capacity === 'number') ? baseBest.capacity : basePts.length;
+      const warmMs  = (typeof baseBest?.warmupMs === 'number') ? baseBest.warmupMs : 2000;
+
+      const pts = basePts.map(p=>({x:p.x, y:p.y, vx:0, vy:0, _cand:0}));
+      const now = performance.now();
+
+      _greedSim = {
+        Wfull:lastLayout.W, Hfull:lastLayout.H, W:Wuse, H:Huse, inset, D,
+        rPart, rPhys,
+        pts, baseCap,
+        phase:'warmup', warmupMs: warmMs, warmupStart: now,
+        simMs: 5000, simStart: null,
+        checkMs: 500, checkUntil: null,
+        cIdx:-1, cR: Math.min(rPhys*0.12, rPhys*0.2), growPer: rPhys*0.035,
+        dt: 1.0,
+        // no-spin physics params
+        damping: 0.995,          // small bleed
+        bounce: 0.0,             // no bouncing -> less rotation
+        mu: 0.012,               // light contact friction
+        resolveIters: 5,         // more resolving to avoid leaks
+        substeps: 3,
+        kCenterWarm: rPhys*0.03, // attraction in warmup
+        kCenterAir:  rPhys*0.006,// low gravity later
+        noise: rPhys*0.0005,     // tiny jitter
+        spinKeep: 0.25,          // keep only 25% of tangential velocity each substep
+      };
+
+      _drawGreedFrame('warming up…');
+      _greedRAF = requestAnimationFrame(_stepGreed);
+    }
+    function stopGreedAnimation(){ if (_greedRAF){ cancelAnimationFrame(_greedRAF); _greedRAF=null; } _greedSim = null; }
+
+    function _applyForces(sim){
+      const {W,H,pts,dt,phase,kCenterWarm,kCenterAir,noise} = sim;
+      const cx=W/2, cy=H/2;
+      for (let i=0;i<pts.length;i++){
+        const p=pts[i];
+        const kCenter = (phase==='warmup') ? kCenterWarm : kCenterAir;
+        let ax=0, ay=0;
+        // center attraction only (no swirl term)
+        const vx=cx-p.x, vy=cy-p.y, vd=Math.hypot(vx,vy)||1;
+        ax += (vx/vd)*kCenter; ay += (vy/vd)*kCenter;
+        // tiny noise to break perfect symmetry
+        ax += (Math.random()*2-1)*noise; ay += (Math.random()*2-1)*noise;
+        p.vx += ax*dt; p.vy += ay*dt;
+      }
+    }
+    function _integrate(sim){
+      const {pts,dt,damping} = sim;
+      for (let i=0;i<pts.length;i++){
+        const p=pts[i];
+        p.vx *= damping; p.vy *= damping;
+        p.x += p.vx*dt; p.y += p.vy*dt;
+      }
+    }
+    function _dampTangential(sim){
+      // kill "orbiting" by damping tangential-to-center velocity
+      const {W,H,pts,spinKeep} = sim;
+      const cx=W/2, cy=H/2;
+      for (let i=0;i<pts.length;i++){
+        const p=pts[i];
+        const ux = cx - p.x, uy = cy - p.y, ud = Math.hypot(ux,uy) || 1;
+        const rx = ux/ud, ry = uy/ud;  // radial toward center
+        const vr = p.vx*rx + p.vy*ry;  // radial component
+        const vtx = p.vx - vr*rx, vty = p.vy - vr*ry; // tangential component
+        p.vx = vr*rx + vtx*spinKeep;
+        p.vy = vr*ry + vty*spinKeep;
+      }
+    }
+    function _walls(sim){
+      const {W,H,pts,bounce} = sim;
+      for (let i=0;i<pts.length;i++){
+        const p=pts[i], rp=(p._cand? sim.cR : sim.rPhys);
+        if (p.x<rp){ p.x=rp; if (p.vx<0) p.vx*=-bounce; }
+        else if (p.x>W-rp){ p.x=W-rp; if (p.vx>0) p.vx*=-bounce; }
+        if (p.y<rp){ p.y=rp; if (p.vy<0) p.vy*=-bounce; }
+        else if (p.y>H-rp){ p.y=H-rp; if (p.vy>0) p.vy*=-bounce; }
+      }
+    }
+    function _bucketize(sim, rad){
+      const cell = 2*rad, map=new Map(), key=(x,y)=>(Math.floor(x/cell)+','+Math.floor(y/cell));
+      for (let i=0;i<sim.pts.length;i++){ const p=sim.pts[i], k=key(p.x,p.y); const arr=map.get(k); if(arr) arr.push(i); else map.set(k,[i]); }
+      return {cell, map};
+    }
+    function _collide(sim){
+      const {pts, mu, resolveIters} = sim;
+      for (let it=0; it<resolveIters; it++){
+        const {map} = _bucketize(sim, sim.rPhys);
+        const nbs=[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+        for (const [kk, list] of map){
+          const [ix,iy]=kk.split(',').map(Number);
+          for (const [dxi,dyi] of nbs){
+            const other = map.get((ix+dxi)+','+(iy+dyi)); if(!other) continue;
+            for (let idxA=0; idxA<list.length; idxA++){
+              const iA = list[idxA]; const A = pts[iA];
+              for (let idxB=0; idxB<other.length; idxB++){
+                const iB = other[idxB]; if (iB<=iA) continue;
+                const B = pts[iB];
+                const rA = (A._cand? sim.cR : sim.rPhys);
+                const rB = (B._cand? sim.cR : sim.rPhys);
+                const dx=A.x-B.x, dy=A.y-B.y;
+                const dist2=dx*dx+dy*dy, min=rA+rB-1e-6;
+                if (dist2 < min*min){
+                  const dist=Math.sqrt(dist2)||1e-9;
+                  const nx=dx/dist, ny=dy/dist;
+                  // positional correction
+                  const pen = min-dist;
+                  const corr = pen*0.5;
+                  A.x += nx*corr; A.y += ny*corr;
+                  B.x -= nx*corr; B.y -= ny*corr;
+                  // normal-only velocity correction (reduce tangential spin)
+                  const rvx = A.vx - B.vx, rvy = A.vy - B.vy;
+                  const vn = rvx*nx + rvy*ny;
+                  if (vn < 0){
+                    const jn = -vn;
+                    const jx = jn*nx, jy=jn*ny;
+                    A.vx += jx*0.5; A.vy += jy*0.5;
+                    B.vx -= jx*0.5; B.vy -= jy*0.5;
+                    // tiny tangential bleed
+                    if (mu>0){
+                      const tx = -ny, ty = nx;
+                      const vt = rvx*tx + rvy*ty;
+                      const bleed = -vt * mu;
+                      const jtx = bleed*tx, jty = bleed*ty;
+                      A.vx += jtx*0.5; A.vy += jty*0.5;
+                      B.vx -= jtx*0.5; B.vy -= jty*0.5;
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        // Clamp to walls after each resolve iteration to prevent leak-through
+        _walls(sim);
+      }
+    }
+    function _partsOnlyGlobalClear(pts, W, H, r){
+      return validateNoOverlap(pts.map(p=>({x:p.x,y:p.y})), r, W, H);
+    }
+
+    function _spawnCandidate(sim){
+      const spot = _pickEmptiest(sim) || {x:sim.W/2,y:sim.H/2};
+      sim.cIdx = sim.pts.length;
+      sim.cR = Math.min(sim.rPhys*0.12, sim.rPhys*0.2);
+      sim.pts.push({x:spot.x, y:spot.y, vx:0, vy:0, _cand:1});
+    }
+    function _pickEmptiest(sim){
+      const {W,H,rPhys,pts} = sim, cell=2*rPhys, step=rPhys*0.9;
+      const buckets=new Map(), key=(x,y)=>(Math.floor(x/cell)+','+Math.floor(y/cell));
+      for (let i=0;i<pts.length;i++){ const p=pts[i], k=key(p.x,p.y); const arr=buckets.get(k); if(arr) arr.push(i); else buckets.set(k,[i]); }
+      const nbs=[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];
+      function minDist(x,y){
+        const ix=Math.floor(x/cell), iy=Math.floor(y/cell); let best2=Infinity;
+        for (const [dxi,dyi] of nbs){
+          const arr=buckets.get((ix+dxi)+','+(iy+dyi)); if(!arr) continue;
+          for (const idx of arr){
+            const q=pts[idx]; const dx=x-q.x, dy=y-q.y; const d2=dx*dx+dy*dy;
+            if (d2<best2) best2=d2;
+          }
+        }
+        return Math.sqrt(best2===Infinity ? (W*W+H*H) : best2);
+      }
+      let best=null,score=-1;
+      for (let y=rPhys; y<=H-rPhys+1e-9; y+=step){
+        for (let x=rPhys; x<=W-rPhys+1e-9; x+=step){
+          const wallClear=Math.min(x,W-x,y,H-y); if (wallClear<rPhys*0.6) continue;
+          const d=minDist(x,y); if (d>score){ score=d; best={x,y}; }
+        }
+      }
+      return best;
+    }
+
+    function _stepGreed(){
+      if (!_greedSim) return; const sim=_greedSim;
+      const now = performance.now();
+      const loops = sim.substeps;
+
+      // WARMUP: 3s (or shorter if chained)
+      if (sim.phase==='warmup'){
+        for (let s=0;s<loops;s++){
+          _applyForces(sim); _integrate(sim); _dampTangential(sim); _walls(sim); _collide(sim); _dampTangential(sim); _walls(sim);
+        }
+        _drawGreedFrame('warming up…');
+        if (now - sim.warmupStart >= sim.warmupMs){
+          sim.phase='sim'; sim.simStart = now; _spawnCandidate(sim);
+        }
+        _greedRAF=requestAnimationFrame(_stepGreed); return;
+      }
+
+      // SIMULATION: 10s total; candidate grows to rPhys then keeps running
+      if (sim.phase==='sim'){
+        if (sim.cIdx>=0) sim.cR = Math.min(sim.rPhys, sim.cR + sim.growPer);
+        for (let s=0;s<loops;s++){
+          _applyForces(sim); _integrate(sim); _dampTangential(sim); _collide(sim); _walls(sim); _collide(sim); _dampTangential(sim); _walls(sim);
+        }
+        _drawGreedFrame('simulating…');
+        if (now - sim.simStart >= sim.simMs){
+          // move to CHECK phase for 2s
+          sim.phase='check'; sim.checkUntil = now + sim.checkMs;
+          const ok = _partsOnlyGlobalClear(sim.pts, sim.W, sim.H, sim.rPart);
+          sim._checkResult = ok;
+          _drawGreedFrame(ok ? 'checking: success' : 'checking: no gain');
+        }
+        _greedRAF=requestAnimationFrame(_stepGreed); return;
+      }
+
+      // CHECK: 2s visual hold, then finalize
+      if (sim.phase==='check'){
+        _drawGreedFrame(sim._checkResult ? 'success!' : 'no gain');
+        if (now >= sim.checkUntil){
+          const ok = !!sim._checkResult;
+          if (ok){
+            const shifted = sim.pts.map(p=>({x:p.x + sim.inset, y:p.y + sim.inset}));
+            lastLayout.greedy = { pts: shifted, capacity: sim.baseCap + 1 };
+            outMaxYield.textContent = String(lastLayout.greedy.capacity);
+            const sheetsRequired = lastLayout.greedy.capacity>0 ? Math.ceil(lastLayout.order/lastLayout.greedy.capacity) : 0;
+            const remainder = lastLayout.greedy.capacity>0 ? (lastLayout.order % lastLayout.greedy.capacity) : 0;
+            outSheetsReq.textContent = String(sheetsRequired);
+            outRemainder.textContent = String(remainder);
+            if (greedMsg){ greedMsg.textContent='Greed Achieved'; greedMsg.className='greed-msg ok show'; setTimeout(()=>{greedMsg.className='greed-msg';greedMsg.textContent='';},3000); }
+
+            // NEW: chain another Greed attempt if toggle is still on
+            if (greedToggle && greedToggle.checked){
+              const carryPts = sim.pts.map(p => ({ x:p.x, y:p.y })); // strip flags/vel
+              stopGreedAnimation();
+              startGreedAnimation(sim.W, sim.H, sim.D, sim.inset,
+                { pts: carryPts, capacity: lastLayout.capacity, warmupMs: 800 },
+                lastLayout.padBuffer
+              );
+              return; // the next cycle will handle drawing
+            }
+          }else{
+            if (greedMsg){ greedMsg.textContent='Greed Already At Max'; greedMsg.className='greed-msg err show'; setTimeout(()=>{greedMsg.className='greed-msg';greedMsg.textContent='';},3000); }
+            if (greedToggle) greedToggle.checked=false;
+          }
+          // fall-through if toggle turned off, or after "no gain"
+          stopGreedAnimation(); renderCurrentView(); return;
+        }
+        _greedRAF=requestAnimationFrame(_stepGreed); return;
+      }
+    }
+
+    function _drawGreedFrame(status){
+      if (!lastLayout || !_greedSim) return;
+      const sim=_greedSim;
+      fitCanvas();
+      const pad=20, cw=canvas.width, ch=canvas.height;
+      const scale=Math.min((cw-pad*2)/sim.Wfull,(ch-pad*2)/sim.Hfull), ox=(cw-sim.Wfull*scale)/2, oy=(ch-sim.Hfull*scale)/2;
+      ctx.clearRect(0,0,cw,ch);
+      const sheetFill=cssVar('--sheet-fill',cssVar('--field','#0b1324'));
+      const sheetStroke=cssVar('--sheet-stroke',cssVar('--border','#243144'));
+      const guideStroke=cssVar('--guide-stroke','#64748b99');
+      ctx.fillStyle=sheetFill; ctx.strokeStyle=sheetStroke; ctx.lineWidth=2;
+      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,sim.Wfull*scale,sim.Hfull*scale,12); ctx.fill(); ctx.stroke(); } else { ctx.fillRect(ox,oy,sim.Wfull*scale,sim.Hfull*scale); ctx.strokeRect(ox,oy,sim.Wfull*scale,sim.Hfull*scale); }
+      // inner dashed guide
+      if (GUIDE_INSET_IN>0){
+        ctx.save();
+        const ix=ox+GUIDE_INSET_IN*scale, iy=oy+GUIDE_INSET_IN*scale;
+        const iW=(sim.Wfull-2*GUIDE_INSET_IN)*scale, iH=(sim.Hfull-2*GUIDE_INSET_IN)*scale;
+        ctx.setLineDash([8,6]); ctx.strokeStyle=guideStroke; ctx.globalAlpha=.9; ctx.lineWidth=1.2;
+        if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ix,iy,iW,iH,10); ctx.stroke(); } else { ctx.strokeRect(ix,iy,iW,iH); }
+        ctx.restore();
+      }
+      const circleStroke=cssVar('--circle-stroke','#60a5fa');
+      const circleFill=cssVar('--circle-fill','rgba(96,165,250,0.15)');
+      const candStroke=cssVar('--accent-2','#60a5fa');
+      const candFill='rgba(255,255,255,0.18)';
+      const rDraw = sim.rPart;
+      ctx.lineWidth=1.6;
+      for (let i=0;i<sim.pts.length;i++){
+        const p=sim.pts[i];
+        const cx = ox + (p.x + sim.inset)*scale;
+        const cy = oy + (p.y + sim.inset)*scale;
+        ctx.beginPath(); ctx.arc(cx,cy, rDraw*scale, 0, Math.PI*2);
+        ctx.fillStyle = p._cand? candFill : circleFill;
+        ctx.strokeStyle = p._cand? candStroke : circleStroke;
+        ctx.fill(); ctx.stroke();
+        // draw hole dynamically without recompute
+        if (holeToggle && holeToggle.checked){
+          ctx.beginPath();
+          ctx.arc(cx, cy, (HOLE_DIAM_IN/2) * scale, 0, Math.PI*2);
+          ctx.fillStyle = sheetFill;
+          ctx.fill();
+          ctx.strokeStyle = circleStroke;
+          ctx.stroke();
+        }
+      }
+      ctx.save();
+      ctx.fillStyle=cssVar('--label-text','#e5e7eb');
+      ctx.font='12px ui-sans-serif, system-ui';
+      ctx.fillText('Greed (no-spin) — '+(status||'running'), ox+8, oy+16);
+      ctx.restore();
+    }
+
+    // ---------- Refactored shared label drawing ----------
+    function drawPadLabel(ctx, cx, cy, D, rPix){
+      // Format diameter text
+      const s = Math.round(D * 1000) / 1000;
+      const numTxt = s.toFixed(3).replace(/\.0+$/,'').replace(/\.$/,'');
+      const inchTxt = '"';
+
+      // Target width ~10% of pad radius
+      const targetWidth = rPix * 0.75;
+      let fontSize = (Math.max(8, Math.min(rPix, 36))|0);
+
+      // Fit loop
+      ctx.font = fontSize + 'px ui-sans-serif, system-ui';
+      while (fontSize > 4) {
+        const numW = ctx.measureText(numTxt).width;
+        const inchW = ctx.measureText(inchTxt).width;
+        const kern  = Math.max(1, Math.round(fontSize * 0.08));
+        if (numW + kern + inchW <= targetWidth) break;
+        fontSize--; ctx.font = fontSize + 'px ui-sans-serif, system-ui';
+      }
+
+      // Common styles
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'center';
+      ctx.font = fontSize + 'px ui-sans-serif, system-ui';
+      ctx.lineWidth = Math.max(1, Math.round(fontSize / 6));
+      ctx.strokeStyle = cssVar('--label-stroke', 'rgba(0,0,0,0.7)');
+      ctx.fillStyle   = cssVar('--label-text', '#e5e7eb');
+
+      // Stroke (faint) + fill (semi-transparent)
+      ctx.globalAlpha = 0.3;
+      try { ctx.strokeText(numTxt, cx, cy); } catch(e) {}
+      ctx.globalAlpha = 0.5;
+      try { ctx.fillText(numTxt, cx, cy); } catch(e) {}
+
+      // Inch mark to the right
+      const numW = ctx.measureText(numTxt).width;
+      const kern = Math.max(1, Math.round(fontSize * 0.08));
+      ctx.textAlign = 'left';
+      const xInch = cx + numW/2 + kern;
+      ctx.globalAlpha = 0.3;
+      try { ctx.strokeText(inchTxt, xInch, cy); } catch(e) {}
+      ctx.globalAlpha = 0.5;
+      try { ctx.fillText(inchTxt, xInch, cy); } catch(e) {}
+
+      // Reset alpha
+      ctx.globalAlpha = 1.0;
+    }
+
+    // ---------- DXF export ----------
+    function dxfHeader(){
+      return [
+        '0','SECTION','2','HEADER',
+        '9','$INSUNITS','70','1',
+        '0','ENDSEC',
+        '0','SECTION','2','TABLES',
+        '0','ENDSEC',
+        '0','SECTION','2','ENTITIES'
+      ].join('\n');
+    }
+    function dxfFooter(){ return ['0','ENDSEC','0','EOF'].join('\n'); }
+    function dxfCircle(x,y,r,layer='CIRCLES'){
+      return ['0','CIRCLE','8',layer,'10',fmt(x),'20',fmt(y),'30','0.0','40',fmt(r)].join('\n');
+    }
+    function dxfLWPoly(ptsClosed, layer='SHEET'){
+      const pts = ptsClosed.slice();
+      const closed = 1;
+      const parts = ['0','LWPOLYLINE','8',layer,'90',String(pts.length),'70',String(closed)];
+      for (const p of pts){ parts.push('10',fmt(p.x),'20',fmt(p.y)); }
+      return parts.join('\n');
+    }
+    function fmt(n){ return (Math.round(n*1e6)/1e6).toFixed(6); }
+
+    function getCurrentLayoutForExport(){
+      if (!lastLayout) return null;
+      const W = lastLayout.W, H = lastLayout.H, D = lastLayout.D, r = D/2;
+      const inset = SHEET_INSET_IN;
+      let centers = [];
+      if (_greedSim){
+        centers = _greedSim.pts.map(p=>({x:p.x + inset, y:p.y + inset}));
+      }else{
+        const useGreedy = (viewMode !== 'partial') && !!lastLayout.greedy;
+        const src = useGreedy ? lastLayout.greedy : lastLayout.base;
+        const capacity = (lastLayout.greedy ? lastLayout.greedy.capacity : lastLayout.base.capacity);
+        const ord = lastLayout.order;
+        const pts = src.pts.slice();
+        let toDraw = pts.length;
+        if (viewMode === 'full'){ toDraw = capacity; }
+        else if (viewMode === 'partial'){
+          const rem = ord % Math.max(1, capacity);
+          toDraw = ord>0 && ord<capacity ? ord : (rem!==0 ? rem : 0);
+        }
+        centers = pts.slice(0, Math.min(toDraw, pts.length));
+      }
+      return { W,H,r,centers };
+    }
+
+    function exportDXF(){
+      const data = getCurrentLayoutForExport();
+      if (!data){ alert('Nothing to export yet.'); return; }
+      const {W,H,r,centers} = data;
+      const parts = [dxfHeader()];
+      parts.push(dxfLWPoly([{x:0,y:0},{x:W,y:0},{x:W,y:H},{x:0,y:H},{x:0,y:0}], 'SHEET'));
+      for (const c of centers){
+        const x = c.x, y = H - c.y;
+        parts.push(dxfCircle(x,y,r,'CIRCLES'));
+        if (holeToggle && holeToggle.checked){
+          parts.push(dxfCircle(x,y, HOLE_DIAM_IN/2, 'HOLES'));
+        }
+      }
+      parts.push(dxfFooter());
+      const blob = new Blob([parts.join('\n')], {type:'application/dxf'});
+      const a = document.createElement('a');
+      const ts = new Date().toISOString().replace(/[:.]/g,'-');
+      const holeText = document.getElementById('holeToggle')?.checked ? '(wh)_' : '(nh)_';
+      a.download = `${W}x${H}_`+(2*r)+"in"+holeText+`${(centers||[]).length}pcs.dxf`;
+      a.href = URL.createObjectURL(blob);
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+    }
+    function updateViewButtons()
+    {
+      const isFull = (viewMode === 'full');
+      viewFullBtn.classList.toggle('active',  isFull);
+      viewPartialBtn.classList.toggle('active', !isFull);
+      viewFullBtn.setAttribute('aria-pressed', String(isFull));
+      viewPartialBtn.setAttribute('aria-pressed', String(!isFull));
+    }
+
+    function setViewMode(mode)
+    {
+      if (mode === 'partial' && viewPartialBtn.disabled) return; // honor disabled state
+      viewMode = mode;
+      updateViewButtons();
+      // keep your current re-render behavior
+      if (_greedSim) _drawGreedFrame(); else renderCurrentView();
+    }
+
+
+    // wiring
+    document.getElementById('downloadDXF').addEventListener('click', exportDXF);
+    document.getElementById('computeBtn').addEventListener('click', computeAndRender);
+    [circleDiameter, orderQty, spaceBetween, textToggle, sheetSize].forEach(el => el && el.addEventListener('change', computeAndRender));
+    // Hole toggle should NOT recompute; just redraw
+    holeToggle.addEventListener('change', ()=>{ if (_greedSim) _drawGreedFrame(); else renderCurrentView(); });
+    document.getElementById('viewFullBtn').addEventListener('click', ()=> setViewMode('full'));
+    document.getElementById('viewPartialBtn').addEventListener('click', ()=> setViewMode('partial'));
+    window.addEventListener('resize', ()=>{ if (_greedSim) _drawGreedFrame(); else renderCurrentView(); });
+    greedToggle.addEventListener('change', ()=>{
+  // Only stop animation immediately when turning OFF; do NOT auto-compute when turning ON.
+  if (!greedToggle.checked) { stopGreedAnimation(); renderCurrentView(); }
+  // When switching ON, wait for the user to press Compute.
+});
+if (!CanvasRenderingContext2D.prototype.roundRect){
+      CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+        const rr=Math.min(r, w/2, h/2)||0; this.beginPath();
+        this.moveTo(x+rr,y); this.arcTo(x+w,y,x+w,y+h,rr); this.arcTo(x+w,y+h,x,y+h,rr);
+        this.arcTo(x,y+h,x,y,rr); this.arcTo(x,y,x+w,y,rr); this.closePath(); return this;
+      }
+    }
+
+    populateSheets();
+    computeAndRender();
+  </script>
+
+<!-- === Mixed-Size Addon (auto-injected) === -->
+<script>
+(function()
+{
+  // --- Add secondary inputs next to existing fields ---
+    const row3 = document.getElementById('row3') || document.querySelector('#row3');
+    if (row3 && !document.getElementById('circleDiameter2')) {
+      const wrap1 = document.createElement('div');
+      wrap1.className = 'field';
+      wrap1.innerHTML = `
+        <label for="circleDiameter2">Pad 2 Diameter (in)</label>
+        <input id="circleDiameter2" type="number" min="0" step="0.125" placeholder="e.g., 4">
+      `;
+      const wrap2 = document.createElement('div');
+      wrap2.className = 'field';
+      wrap2.innerHTML = `
+        <label for="orderQty2">Order Qty (Pad 2)</label>
+        <input id="orderQty2" type="number" min="0" step="1" placeholder="e.g., 120">
+      `;
+      // insert after Order Qty
+      const orderQtyField = row3.querySelector('#orderQty')?.parentElement || row3.lastElementChild;
+      if (orderQtyField && orderQtyField.nextSibling) {
+        row3.insertBefore(wrap1, orderQtyField.nextSibling);
+        row3.insertBefore(wrap2, wrap1.nextSibling);
+      } else {
+        row3.appendChild(wrap1);
+        row3.appendChild(wrap2);
+      }
+    }
+  }
+
+  const circleDiameter2 = document.getElementById('circleDiameter2');
+  const orderQty2       = document.getElementById('orderQty2');
+
+  // Ensure changes re-render
+  [circleDiameter2, orderQty2].forEach(el => el && el.addEventListener('change', ()=>computeAndRender()));
+
+
+    // fallback: multi-download
+    for (let i=0; i<__mixedPlan.sheets.length; i++){
+      const centers = __mixedPlan.sheets[i];
+      const dxfText = buildDXFTextForCenters(W, H, centers, __mixedPerSizeLayers);
+      const name = `${W}x${H}_`+(2*r)+"in_"+`${(centers||[]).length}pcs.dxf`; //File Name
+      const blob = new Blob([dxfText], {type:'application/dxf'});
+      const a = document.createElement('a');
+      a.download = name;
+      a.href = URL.createObjectURL(blob);
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+    }
+    alert('All sheets exported (multiple downloads).');
+  }
+  
+
+  // --------- Override draw & export to support per-circle r ---------
+    const orig_drawLayout = window.drawLayout;
+    window.drawLayout = function(W, H, D, pts, viewMode, order, capacity){
+    // If centers carry individual radii, draw per-circle; else delegate
+    if (pts && pts.length && typeof pts[0].r === 'number'){
+      const canvas = document.getElementById('sheetCanvas');
+      const ctx = canvas.getContext('2d');
+      // reuse original to do background, guides, etc., but skip circle loop by calling stripped copy?
+      // Simpler: re-implement minimal draw using styles from CSS vars:
+
+      // We'll mimic the header of the original draw to compute ox,oy,scale quickly:
+      function cssVar(n, fallback){ const s=getComputedStyle(document.documentElement).getPropertyValue(n).trim(); return s || fallback || ''; }
+      function fitCanvas(){ const dpr=window.devicePixelRatio||1; const rect=canvas.getBoundingClientRect(); const w=Math.max(300, rect.width|0), h=Math.max(200, rect.height|0); if (canvas.width!==w*dpr||canvas.height!==h*dpr){ canvas.width=w*dpr; canvas.height=h*dpr; } ctx.setTransform(dpr,0,0,dpr,0,0); }
+      fitCanvas();
+      const pad=20, cw=canvas.width, ch=canvas.height, scale=Math.min((cw-pad*2)/W,(ch-pad*2)/H), ox=(cw-W*scale)/2, oy=(ch-H*scale)/2;
+      ctx.clearRect(0,0,cw,ch);
+      const sheetFill=cssVar('--sheet-fill','#0b1324');
+      const sheetStroke=cssVar('--sheet-stroke','#243144');
+      const guideStroke=cssVar('--guide-stroke','#64748b99');
+
+      ctx.fillStyle=sheetFill; ctx.strokeStyle=sheetStroke; ctx.lineWidth=2;
+      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,W*scale,H*scale,10); ctx.fill(); ctx.stroke(); }
+      else { ctx.fillRect(ox,oy,W*scale,H*scale); ctx.strokeRect(ox,oy,W*scale,H*scale); }
+
+      // inner guide
+      if (window.GUIDE_INSET_IN>0){
+        ctx.save();
+        const ix=ox+window.GUIDE_INSET_IN*scale, iy=oy+window.GUIDE_INSET_IN*scale;
+        const iW=(W-2*window.GUIDE_INSET_IN)*scale, iH=(H-2*window.GUIDE_INSET_IN)*scale;
+        ctx.setLineDash([8,6]); ctx.strokeStyle=guideStroke; ctx.globalAlpha=.9; ctx.lineWidth=1.2;
+        if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ix,iy,iW,iH,10); ctx.stroke(); } else { ctx.strokeRect(ix,iy,iW,iH); }
+        ctx.restore();
+      }
+
+      // decide how many to draw (respect full/partial logic)
+      let toDraw = pts.length;
+      if (viewMode === 'full'){ toDraw = Math.min(capacity||pts.length, pts.length); }
+      else if (viewMode === 'partial'){
+        const rem = order % Math.max(1, capacity||pts.length);
+        toDraw = order>0 && order<(capacity||pts.length) ? order : (rem!==0 ? rem : 0);
+      }
+      const circleStroke=cssVar('--circle-stroke','#60a5fa');
+      const circleFill=cssVar('--circle-fill','rgba(96,165,250,0.15)');
+      ctx.lineWidth=1.6;
+      const holeOn = !!(window.holeToggle && window.holeToggle.checked);
+      const holeR = window.HOLE_DIAM_IN/2;
+
+      for (let i=0;i<Math.min(toDraw, pts.length);i++){
+        const p=pts[i];
+        const cx=ox+p.x*scale, cy=oy+p.y*scale;
+        const rPix = (p.r)*scale;
+        ctx.beginPath(); ctx.arc(cx,cy,rPix,0,Math.PI*2); ctx.fillStyle=circleFill; ctx.strokeStyle=circleStroke; ctx.fill(); ctx.stroke();
+        if (holeOn){ ctx.beginPath(); ctx.arc(cx,cy, holeR*scale, 0, Math.PI*2); ctx.fillStyle=cssVar('--sheet-fill','#0b1324'); ctx.fill(); ctx.strokeStyle=circleStroke; ctx.stroke(); }
+        if (window.textToggle && window.textToggle.checked){
+          const Dthis = p.r*2;
+          window.drawPadLabel && window.drawPadLabel(ctx, cx, cy, Dthis, rPix);
+        }
+      }
+      ctx.fillStyle='rgba(148,163,184,0.7)'; ctx.font='12px ui-sans-serif, system-ui';
+      ctx.fillText('Guides shown (dashed). Mixed mode: big→small; Greed disabled.', ox+6, oy+H*scale-8);
+      return;
+    }
+    // Fallback to original for single-size
+    return orig_drawLayout(W,H,D,pts,viewMode,order,capacity);
+  };
+
+  // Override exportDXF to honor per-circle radii (else fallback)
+  const __orig_exportDXF = window.exportDXF;
+  window.exportDXF = function(){
+    const data = getCurrentLayoutForExport && getCurrentLayoutForExport();
+    if (data && data.centers && data.centers.length && typeof data.centers[0].r === 'number'){
+      const { W, H, centers } = data;
+      const dxfText = (function(){
+        const parts = [dxfHeader()];
+        parts.push(dxfLWPoly([{x:0,y:0},{x:W,y:0},{x:W,y:H},{x:0,y:H},{x:0,y:0}], 'SHEET'));
+        for (const c of centers){
+          const x = c.x, y = H - c.y;
+          parts.push(dxfCircle(x,y,c.r,'CIRCLES'));
+          if (window.holeToggle && window.holeToggle.checked){
+            const holeR = (typeof c.holeR==='number')? c.holeR : (window.HOLE_DIAM_IN/2);
+            if (holeR>0) parts.push(dxfCircle(x,y,holeR,'HOLES'));
+          }
+        }
+        parts.push(dxfFooter());
+        return parts.join('\\n');
+      })();
+      const blob = new Blob([dxfText], {type:'application/dxf'});
+      const a = document.createElement('a');
+      const ts = new Date().toISOString().replace(/[:.]/g,'-');
+      const holeText = document.getElementById('holeToggle')?.checked ? '(wh)_' : '(nh)_';
+      a.download = `${W}x${H}_`+(2*r)+"in"+holeText+`${(centers||[]).length}pcs.dxf`;
+      a.href = URL.createObjectURL(blob);
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+      return;
+    }
+    return __orig_exportDXF();
+  };
+
+ // --------- Override computeAndRender to add mixed path ----------
+const __orig_computeAndRender = window.computeAndRender;
+window.computeAndRender = function(){
+  // NEW: read sheet from LxW text box
+  const sizeStr = (document.getElementById('sheetSize')?.value || '').trim();
+  const size = window.parseSize(sizeStr);
+
+  const D1 = Number(window.circleDiameter.value);
+  const Q1 = Math.max(0, Math.floor(Number(window.orderQty.value || 0) || 0));
+  const D2 = Number(document.getElementById('circleDiameter2')?.value || 0);
+  const Q2 = Math.max(0, Math.floor(Number(document.getElementById('orderQty2')?.value || 0) || 0));
+
+  // If no mixed sizes or no valid sheet, run original path
+  if (!(size && D1>0) || !(D2>0 && Q2>0)){
+    __mixedPlan = null; // hide toolbar
+    const bar = document.getElementById('mixedSheetToolbar'); if (bar) bar.style.display='none';
+    return __orig_computeAndRender();
+  }
+
+  // Mixed mode:
+  window.stopGreedAnimation && window.stopGreedAnimation(); // Greed is single-radius
+  const W0=size.w, H0=size.h;
+  const inset = window.SHEET_INSET_IN;
+  const PAD_BUFFER = window.getPadBuffer ? window.getPadBuffer() : 0;
+
+  const plan = planMixedOrder(W0, H0, inset, PAD_BUFFER, D1, Q1, D2, Q2);
+  __mixedPlan = plan;
+  setMixedPlan(plan);
+
+  // ... keep the rest of your function exactly the same ...
+
+
+    // Update KPI labels (rough but informative)
+    const totalOrdered = Q1 + Q2;
+    const capacitySheet1 = (plan.sheets[0] || []).length;
+    window.outMaxYield.textContent = String(capacitySheet1 || 0);
+    window.outSheetsReq.textContent = String(plan.totalSheets || 0);
+    const lastCap = plan.sheets.length ? plan.sheets[plan.sheets.length-1].length : 0;
+    const remainder = (lastCap>0 && totalOrdered>0) ? (totalOrdered % lastCap) : 0;
+    window.outRemainder.textContent = (remainder === 0 && totalOrdered>0) ? 'Full' : String(remainder);
+
+    // Setup lastLayout for renderer/exporter and show sheet 1
+    window.lastLayout = {
+      W: W0, H: H0, D: D1, // D for labels; per circle uses c.r
+      order: totalOrdered,
+      padBuffer: PAD_BUFFER,
+      base: { pts: plan.sheets[0] || [], capacity: capacitySheet1 },
+      greedy: null
+    };
+    // view button states
+    window.viewFullBtn.textContent = 'Full Sheet (' + Math.max(0, (plan.totalSheets||0)-1) + ')';
+    window.viewPartialBtn.textContent = 'Partial (' + (plan.totalSheets>0 ? 1 : 0) + ')';
+    window.viewPartialBtn.disabled = !(plan.totalSheets>0);
+    window.viewFullBtn.disabled = !(plan.totalSheets>1);
+    window.viewMode = 'full';
+
+    // Render first mixed sheet and show toolbar
+    showMixedSheet(0);
+    const bar = ensureMixedToolbar(); bar.style.display='flex';
+  };
+
+})();
+</script>
+<script>
+/* === Mixed: press Enter to fill gaps with Pad 2 === */
+(function(){
+  // Is mixed on? (prefer your toggle; fallback to pad2 fields > 0)
+  function isMixedActive(){
+    if (typeof window.__mixedToggle === 'function') return !!window.__mixedToggle();
+    const d2 = document.getElementById('circleDiameter2');
+    const q2 = document.getElementById('orderQty2');
+    return d2 && +d2.value > 0 && q2 && +q2.value > 0;
+  }
+
+  // Collision against already-placed circles (each with its own radius)
+  function canPlaceAt(x, y, rEff, placed, padBuf){
+    const eps = 1e-7;
+    for (const q of placed){
+      const min = rEff + (q.r + padBuf);
+      const dx = x - q.x, dy = y - q.y;
+      if (dx*dx + dy*dy < (min*min - eps)) return false;
+    }
+    return true;
+  }
+
+  // Main: read current canvas state, then hex-scan to sprinkle Pad2 where they fit
+  function fillSecondSizeIntoGaps(){
+    if (!isMixedActive()) return;
+
+    const d2El = document.getElementById('circleDiameter2');
+    const q2El = document.getElementById('orderQty2');
+    const D2   = Number(d2El?.value || 0);
+    let need   = Math.max(0, Math.floor(Number(q2El?.value || 0)));
+
+    const data = window.lastLayout || (window.getCurrentLayoutForExport && window.getCurrentLayoutForExport());
+    if (!data || !data.W || !data.H || !D2) return;
+
+    const { W, H } = data;
+    const inset  = window.SHEET_INSET_IN || 0;
+    const padBuf = window.getPadBuffer ? window.getPadBuffer() : 0;
+
+    const rS  = D2 / 2;
+    const rES = rS + padBuf;
+
+    // Existing parts on canvas
+    const pts = data.base?.pts ? data.base.pts : (data.centers || []);
+    // Count how many smalls already exist (approx radius match)
+    const smallAlready = pts.filter(p => Math.abs((p.r ?? (data.D/2)) - rS) < 1e-6).length;
+    need = Math.max(0, need - smallAlready);
+    if (need <= 0){ window.renderCurrentView && window.renderCurrentView(); return; }
+
+    // Build an array for collision checks
+    const placed = pts.map(p => ({ x:p.x, y:p.y, r:(p.r ?? data.D/2) }));
+
+    // Hex candidate scan across the usable area (including inset)
+    const dx = 2 * rES;
+    const dy = Math.sqrt(3) * rES;
+    let row = 0, added = 0;
+
+    for (let y = inset + rES; y <= H - inset - rES + 1e-9; y += dy, row++){
+      const x0 = (row % 2 === 0) ? (inset + rES) : (inset + rES*2);
+      for (let x = x0; x <= W - inset - rES + 1e-9; x += dx){
+        if (canPlaceAt(x, y, rES, placed, padBuf)){
+          placed.push({ x, y, r: rS });
+          pts.push({ x, y, r: rS });       // add to the actual canvas layout
+          if (++added >= need) break;
+        }
+      }
+      if (added >= need) break;
+    }
+
+    // write back + refresh
+    if (data.base){
+      data.base.pts = pts;
+      data.base.capacity = pts.length;
+    }
+    window.lastLayout = data;
+    if (window.outMaxYield) window.outMaxYield.textContent = String(pts.length);
+    window.renderCurrentView && window.renderCurrentView();
+  }
+
+  // Enter = fill small parts into gaps (and stop physics if it’s running)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter'){
+      if (window.stopGreedAnimation) window.stopGreedAnimation();
+      fillSecondSizeIntoGaps();
+    }
+  });
+
+  // Optional: if you have a UI "Enter" button, wire it too
+  const enterBtn = document.getElementById('computeBtn');
+  if (enterBtn) enterBtn.addEventListener('click', fillSecondSizeIntoGaps);
+
+  // Expose for manual trigger from console or other buttons
+  window.fillSecondSizeIntoGaps = fillSecondSizeIntoGaps;
+})();
+
+    // Pressing Enter in any input triggers compute
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (typeof computeAndRender === 'function') computeAndRender();
+      }
+    });
+const downloadGCODEBtn = document.getElementById('downloadGCODE');
+if (downloadGCODEBtn) downloadGCODEBtn.addEventListener('click', exportGCode);
+
+    // Download PNG of the current canvas view
+    (function setupPngDownload(){
+      try{
+        const btn = document.getElementById('downloadPNG');
+        const canvas = document.getElementById('sheetCanvas');
+        if (btn && canvas) {
+          btn.addEventListener('click', () => {
+            const a = document.createElement('a');
+            const ts = new Date().toISOString().replace(/[:.]/g,'-');
+            const isMixed = (typeof window.__mixedToggle === 'function' && window.__mixedToggle());
+            const name = isMixed ? `layout_mixed_${ts}.png` : `layout_${ts}.png`;
+            a.download = name;
+            a.href = canvas.toDataURL('image/png');
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          });
+        }
+      }catch(e){}
+    })();
+</script>
+
+
+</body>
+</html>
