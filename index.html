@@ -534,8 +534,10 @@ function exportGCode() {
             (function fit(){ const dpr=window.devicePixelRatio||1, r=canvas.getBoundingClientRect(), w=Math.max(300,r.width|0), h=Math.max(200,r.height|0); if (canvas.width!==w*dpr||canvas.height!==h*dpr){ canvas.width=w*dpr; canvas.height=h*dpr; } ctx.setTransform(dpr,0,0,dpr,0,0); })();
             const pad=20, cw=canvas.width, ch=canvas.height, scale=Math.min((cw-pad*2)/W,(ch-pad*2)/H), ox=(cw-W*scale)/2, oy=(ch-H*scale)/2;
             ctx.clearRect(0,0,cw,ch);
-            ctx.fillStyle=cssVar('--sheet-fill','#0b1324'); ctx.strokeStyle=cssVar('--sheet-stroke','#243144'); ctx.lineWidth=2;
-            if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,W*scale,H*scale,10); ctx.fill(); ctx.stroke(); } else { ctx.fillRect(ox,oy,W*scale,H*scale); ctx.strokeRect(ox,oy,W*scale,H*scale); }
+            const transparentExport = !!window.__transparentExport;
+            ctx.strokeStyle=cssVar('--sheet-stroke','#243144'); ctx.lineWidth=2;
+            if (!transparentExport){ ctx.fillStyle=cssVar('--sheet-fill','#0b1324'); }
+            if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,W*scale,H*scale,10); if (!transparentExport) ctx.fill(); ctx.stroke(); } else { if (!transparentExport) ctx.fillRect(ox,oy,W*scale,H*scale); ctx.strokeRect(ox,oy,W*scale,H*scale); }
             if (window.GUIDE_INSET_IN>0){
               ctx.save();
               const ix=ox+window.GUIDE_INSET_IN*scale, iy=oy+window.GUIDE_INSET_IN*scale;
@@ -1470,10 +1472,12 @@ if (!CanvasRenderingContext2D.prototype.roundRect){
       const sheetFill=cssVar('--sheet-fill','#0b1324');
       const sheetStroke=cssVar('--sheet-stroke','#243144');
       const guideStroke=cssVar('--guide-stroke','#64748b99');
+      const transparentExport = !!window.__transparentExport;
 
-      ctx.fillStyle=sheetFill; ctx.strokeStyle=sheetStroke; ctx.lineWidth=2;
-      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,W*scale,H*scale,10); ctx.fill(); ctx.stroke(); }
-      else { ctx.fillRect(ox,oy,W*scale,H*scale); ctx.strokeRect(ox,oy,W*scale,H*scale); }
+      ctx.strokeStyle=sheetStroke; ctx.lineWidth=2;
+      if (!transparentExport){ ctx.fillStyle=sheetFill; }
+      if (ctx.roundRect){ ctx.beginPath(); ctx.roundRect(ox,oy,W*scale,H*scale,10); if (!transparentExport) ctx.fill(); ctx.stroke(); }
+      else { if (!transparentExport) ctx.fillRect(ox,oy,W*scale,H*scale); ctx.strokeRect(ox,oy,W*scale,H*scale); }
 
       // inner guide
       if (window.GUIDE_INSET_IN>0){
@@ -1716,25 +1720,59 @@ window.computeAndRender = function(){
 const downloadGCODEBtn = document.getElementById('downloadGCODE');
 if (downloadGCODEBtn) downloadGCODEBtn.addEventListener('click', exportGCode);
 
-    // Download PNG of the current canvas view
+    // Download PNG of the current canvas view with transparent background
     (function setupPngDownload(){
       try{
         const btn = document.getElementById('downloadPNG');
-        const canvas = document.getElementById('sheetCanvas');
-        if (btn && canvas) {
+        const liveCanvas = document.getElementById('sheetCanvas');
+        if (btn && liveCanvas) {
           btn.addEventListener('click', () => {
-            const a = document.createElement('a');
-            const ts = new Date().toISOString().replace(/[:.]/g,'-');
-            const isMixed = (typeof window.__mixedToggle === 'function' && window.__mixedToggle());
-            const name = isMixed ? `layout_mixed_${ts}.png` : `layout_${ts}.png`;
-            a.download = name;
-            a.href = canvas.toDataURL('image/png');
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
+            try{
+              const exportCanvas = document.createElement('canvas');
+              exportCanvas.width = liveCanvas.width;
+              exportCanvas.height = liveCanvas.height;
+              const exportCtx = exportCanvas.getContext('2d');
+              exportCtx.clearRect(0, 0, exportCanvas.width, exportCanvas.height);
+
+              const oldCanvas = window.canvas;
+              const oldCtx = window.ctx;
+              const oldFlag = window.__transparentExport;
+
+              window.canvas = exportCanvas;
+              window.ctx = exportCtx;
+              window.__transparentExport = true;
+
+              if (typeof window.renderCurrentView === 'function' && window.lastLayout) {
+                window.renderCurrentView();
+              } else if (typeof window._drawGreedFrame === 'function' && window._greedSim) {
+                window._drawGreedFrame('export');
+              } else {
+                exportCtx.drawImage(liveCanvas, 0, 0);
+              }
+
+              window.canvas = oldCanvas;
+              window.ctx = oldCtx;
+              if (typeof oldFlag === 'undefined') delete window.__transparentExport;
+              else window.__transparentExport = oldFlag;
+
+              const a = document.createElement('a');
+              const ts = new Date().toISOString().replace(/[:.]/g,'-');
+              const isMixed = !!(document.getElementById('circleDiameter2')?.value && document.getElementById('orderQty2')?.value);
+              const name = isMixed ? `layout_mixed_${ts}.png` : `layout_${ts}.png`;
+              a.download = name;
+              a.href = exportCanvas.toDataURL('image/png');
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+            }catch(err){
+              console.error('PNG export failed:', err);
+              alert('PNG export failed. Check console for details.');
+            }
           });
         }
-      }catch(e){}
+      }catch(e){
+        console.error('setupPngDownload failed:', e);
+      }
     })();
 </script>
 
