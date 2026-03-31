@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Circle Yield Calculator</title>
@@ -494,7 +493,7 @@ function getLayoutForGcode() {
   return { W: window.lastLayout.W, H: window.lastLayout.H, centers };
 }
 
-function exportGCode() {
+window.exportGCode = function exportGCode() {
   const data = getLayoutForGcode();
   if (!data || !data.centers || !data.centers.length) {
     alert('No layout to export. Compute a layout first.'); return;
@@ -1501,58 +1500,94 @@ if (!CanvasRenderingContext2D.prototype.roundRect){
       }
     });
 const downloadGCODEBtn = document.getElementById('downloadGCODE');
-if (downloadGCODEBtn) downloadGCODEBtn.addEventListener('click', exportGCode);
+if (downloadGCODEBtn) {
+  downloadGCODEBtn.addEventListener('click', () => {
+    if (typeof window.exportGCode === 'function') return window.exportGCode();
+    alert('G-code export is not available in this build.');
+  });
+}
 
     // Download PNG of the current canvas view with transparent background
     (function setupPngDownload(){
+      function parseCssColor(str){
+        if (!str) return null;
+        const s = String(str).trim();
+        let m = s.match(/^#([0-9a-f]{3})$/i);
+        if (m){
+          const h = m[1];
+          return [parseInt(h[0]+h[0],16), parseInt(h[1]+h[1],16), parseInt(h[2]+h[2],16), 255];
+        }
+        m = s.match(/^#([0-9a-f]{6})$/i);
+        if (m){
+          const h = m[1];
+          return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16), 255];
+        }
+        m = s.match(/^rgba?\(([^)]+)\)$/i);
+        if (m){
+          const parts = m[1].split(',').map(v => v.trim());
+          const r = Math.round(parseFloat(parts[0]) || 0);
+          const g = Math.round(parseFloat(parts[1]) || 0);
+          const b = Math.round(parseFloat(parts[2]) || 0);
+          const a = parts[3] == null ? 255 : Math.round((parseFloat(parts[3]) || 0) * 255);
+          return [r,g,b,a];
+        }
+        return null;
+      }
+      function near(r,g,b,target,tol){
+        if (!target) return false;
+        return Math.abs(r-target[0]) <= tol && Math.abs(g-target[1]) <= tol && Math.abs(b-target[2]) <= tol;
+      }
       try{
         const btn = document.getElementById('downloadPNG');
         const liveCanvas = document.getElementById('sheetCanvas');
-        if (btn && liveCanvas) {
-          btn.addEventListener('click', () => {
-            try{
-              const exportCanvas = document.createElement('canvas');
-              exportCanvas.width = liveCanvas.width;
-              exportCanvas.height = liveCanvas.height;
-              const exportCtx = exportCanvas.getContext('2d');
-              exportCtx.clearRect(0, 0, exportCanvas.width, exportCanvas.height);
+        if (!btn || !liveCanvas) return;
 
-              const oldCanvas = window.canvas;
-              const oldCtx = window.ctx;
-              const oldFlag = window.__transparentExport;
+        btn.addEventListener('click', () => {
+          try{
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = liveCanvas.width;
+            exportCanvas.height = liveCanvas.height;
+            const exportCtx = exportCanvas.getContext('2d', { willReadFrequently: true });
+            exportCtx.clearRect(0, 0, exportCanvas.width, exportCanvas.height);
+            exportCtx.drawImage(liveCanvas, 0, 0);
 
-              window.canvas = exportCanvas;
-              window.ctx = exportCtx;
-              window.__transparentExport = true;
+            const styles = getComputedStyle(document.body);
+            const bgTargets = [
+              parseCssColor(styles.getPropertyValue('--canvas-bg')),
+              parseCssColor(styles.getPropertyValue('--sheet-fill')),
+              parseCssColor(styles.getPropertyValue('--field')),
+              parseCssColor(styles.getPropertyValue('--panel')),
+              parseCssColor(styles.getPropertyValue('--panel-hi'))
+            ].filter(Boolean);
 
-              if (typeof window.renderCurrentView === 'function' && window.lastLayout) {
-                window.renderCurrentView();
-              } else if (typeof window._drawGreedFrame === 'function' && window._greedSim) {
-                window._drawGreedFrame('export');
-              } else {
-                exportCtx.drawImage(liveCanvas, 0, 0);
+            const img = exportCtx.getImageData(0, 0, exportCanvas.width, exportCanvas.height);
+            const data = img.data;
+            for (let i = 0; i < data.length; i += 4){
+              const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+              if (!a) continue;
+              let makeTransparent = false;
+              for (const t of bgTargets){
+                if (near(r,g,b,t,18)) { makeTransparent = true; break; }
               }
-
-              window.canvas = oldCanvas;
-              window.ctx = oldCtx;
-              if (typeof oldFlag === 'undefined') delete window.__transparentExport;
-              else window.__transparentExport = oldFlag;
-
-              const a = document.createElement('a');
-              const ts = new Date().toISOString().replace(/[:.]/g,'-');
-              const isMixed = !!(document.getElementById('circleDiameter2')?.value && document.getElementById('orderQty2')?.value);
-              const name = isMixed ? `layout_mixed_${ts}.png` : `layout_${ts}.png`;
-              a.download = name;
-              a.href = exportCanvas.toDataURL('image/png');
-              document.body.appendChild(a);
-              a.click();
-              a.remove();
-            }catch(err){
-              console.error('PNG export failed:', err);
-              alert('PNG export failed. Check console for details.');
+              // Also strip very dark neutral background pixels that commonly come from local preview themes.
+              if (!makeTransparent && r < 28 && g < 36 && b < 48) makeTransparent = true;
+              if (makeTransparent) data[i+3] = 0;
             }
-          });
-        }
+            exportCtx.putImageData(img, 0, 0);
+
+            const a = document.createElement('a');
+            const ts = new Date().toISOString().replace(/[:.]/g,'-');
+            const isMixed = !!(document.getElementById('circleDiameter2')?.value && document.getElementById('orderQty2')?.value);
+            a.download = isMixed ? `layout_mixed_${ts}.png` : `layout_${ts}.png`;
+            a.href = exportCanvas.toDataURL('image/png');
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }catch(err){
+            console.error('PNG export failed:', err);
+            alert('PNG export failed. Check console for details.');
+          }
+        });
       }catch(e){
         console.error('setupPngDownload failed:', e);
       }
